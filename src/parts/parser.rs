@@ -2,13 +2,14 @@ use std::io::{stdin, Read, self};
 
 use indexmap::IndexMap;
 
-use super::{datastructures::{StackNode, NodeType}, std::standard::{add, sub, mul, div, read, equal}};
+use super::{datastructures::{StackNode, NodeType}, std::standard::{add, sub, mul, div, read, equal, notequal, greater, less, greaterequal, lessequal}};
 
 pub fn parse_tree(mut root:Box<StackNode>){
 	//Variables
 	let mut stack:Box<Vec<Box<IndexMap<String, Box<StackNode>>>>> = Box::new(vec![Box::new(IndexMap::new())]);
 	let mut garbage_stack:Box<Vec<Box<Vec<Box<String>>>>> = Box::new(vec![]);
 	let mut user_ret = Box::new(StackNode::default());
+	user_ret.ntype = Box::new(NodeType::None);
 	user_ret.ntype = Box::new(NodeType::None);
 	parse_node(&mut user_ret, &mut Box::new(true), root.clone(), &mut stack, &mut garbage_stack);
 }
@@ -106,6 +107,13 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 					}
 					"N" => {
 						//NOT
+						ret_node.ntype = match *args_list[0].ntype.clone() {
+							NodeType::Str(val) => if *val == "" {Box::new(NodeType::Bool(Box::new(true)))} else {Box::new(NodeType::Bool(Box::new(false)))},
+							NodeType::Int(val) => Box::new(NodeType::Bool(Box::new(*val == 0))),
+							NodeType::Float(val) => Box::new(NodeType::Bool(Box::new(*val == 0.0))),
+							NodeType::Bool(val) => Box::new(NodeType::Bool(Box::new(!*val))),
+							_ => {Box::new(NodeType::Bool(Box::new(true)))},
+						}
 					}
 					"E" => {
 						//EQUAL
@@ -113,18 +121,23 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 					}
 					"NE" => {
 						//NOT EQUAL
+						ret_node.ntype = notequal(args_list[0].ntype.clone(), args_list[1].ntype.clone());
 					}
 					"G" => {
 						//GREATER
+						ret_node.ntype = greater(args_list[0].ntype.clone(), args_list[1].ntype.clone());
 					}
 					"L" => {
 						//LESS
+						ret_node.ntype = less(args_list[0].ntype.clone(), args_list[1].ntype.clone());
 					}
 					"GE" => {
 						//GREATER OR EQUAL
+						ret_node.ntype = greaterequal(args_list[0].ntype.clone(), args_list[1].ntype.clone());
 					}
 					"LE" => {
 						//LESS OR EQUAL
+						ret_node.ntype = lessequal(args_list[0].ntype.clone(), args_list[1].ntype.clone());
 					}
 					"read" => {
 						//read from files and return contents

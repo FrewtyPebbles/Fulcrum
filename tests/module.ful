@@ -1,4 +1,31 @@
-normal_variable = "i am a normal variable";
-li = [[1, 2, 3], [1, 2, 3], [1, 2, 3]];
+fun exp(base, exponent) {
+	fun exp_r(base_r, exponent_r) {
+		base_r = mul(base_r, base);
+		exponent_r = sub(exponent_r, 1);
+		if exponent_r {
+			return exp_r(base_r, exponent_r);
+		}
+		else {
+			return base_r;
+		}
+	}
+	return exp_r(base, sub(exponent, 1));
+}
 
-print(read("tokens.txt"));
+fun executor(val, function) {
+	return function(val);
+}
+
+print(add(exp(5, 5), "\n"));
+
+print(
+	add(
+		executor(
+			20,
+			fun runner(val) {
+				return mul(val, 2);
+			}
+		),
+		"\n"
+	)
+);
