@@ -1,0 +1,14 @@
+import('module.ful');
+string = 'abc';
+variable = 200;
+variable = sub(variable, -100);
+
+FUN exp(base, exponent) {
+	IF not(equal(exponent, 0)) {
+		print(-10);
+		RETURN exp(mul(base, base), sub(exponent, 1));
+	}
+	ELSE {
+		RETURN base;
+	}
+}

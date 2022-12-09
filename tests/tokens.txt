@@ -1,0 +1,14 @@
+FuncCall("import"), StringLit("module.ful"), StatementEnd, EndLine, 
+Assign("string"), StringLit("abc"), EndLine, 
+Assign("variable"), IntLit(200), EndLine, 
+Assign("variable"), FuncCall("sub"), Variable("variable"), IntLit(-100), StatementEnd, EndLine, 
+
+FuncDeff("exp"), Variable("base"), Variable("exponent"), StatementEnd, StartScope, 
+	If, FuncCall("not"), FuncCall("equal"), Variable("exponent"), IntLit(0), StatementEnd, StatementEnd, StartScope, 
+		Return(Void), FuncCall("exp"), FuncCall("mul"), Variable("base"), Variable("base"), StatementEnd, FuncCall("sub"), Variable("exponent"), IntLit(1), StatementEnd, StatementEnd, EndLine, 
+	EndScope, 
+	El, StartScope, 
+		Return(Void), Variable("base"), EndLine, 
+	EndScope, 
+
+EndScope
