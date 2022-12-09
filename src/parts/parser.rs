@@ -2,7 +2,7 @@ use std::io::{stdin, Read, self};
 
 use indexmap::IndexMap;
 
-use super::datastructures::{StackNode, NodeType};
+use super::{datastructures::{StackNode, NodeType}, std::standard::{add, sub, mul, div, read, equal}};
 
 pub fn parse_tree(mut root:Box<StackNode>){
 	//Variables
@@ -93,51 +93,43 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 					}
 					//put the math and complex functions into std/standard.rs as functions
 					"add" => {
-						match &*args_list[0].ntype {
-							NodeType::Str(val) => print!("{val}"),
-							NodeType::Int(val) => print!("{val}"),
-							NodeType::Float(val) => print!("{val}"),
-							NodeType::Bool(val) => print!("{val}"),
-							_ => {},
-						}
+						ret_node.ntype = add(args_list[0].ntype.clone(), args_list[1].ntype.clone());
 					}
 					"sub" => {
-						match &*args_list[0].ntype {
-							NodeType::Str(val) => print!("{val}"),
-							NodeType::Int(val) => print!("{val}"),
-							NodeType::Float(val) => print!("{val}"),
-							NodeType::Bool(val) => print!("{val}"),
-							_ => {},
-						}
+						ret_node.ntype = sub(args_list[0].ntype.clone(), args_list[1].ntype.clone());
 					}
 					"mul" => {
-						match &*args_list[0].ntype {
-							NodeType::Str(val) => print!("{val}"),
-							NodeType::Int(val) => print!("{val}"),
-							NodeType::Float(val) => print!("{val}"),
-							NodeType::Bool(val) => print!("{val}"),
-							_ => {},
-						}
+						ret_node.ntype = mul(args_list[0].ntype.clone(), args_list[1].ntype.clone());
 					}
 					"div" => {
-						match &*args_list[0].ntype {
-							NodeType::Str(val) => print!("{val}"),
-							NodeType::Int(val) => print!("{val}"),
-							NodeType::Float(val) => print!("{val}"),
-							NodeType::Bool(val) => print!("{val}"),
-							_ => {},
-						}
+						ret_node.ntype = div(args_list[0].ntype.clone(), args_list[1].ntype.clone());
+					}
+					"N" => {
+						//NOT
+					}
+					"E" => {
+						//EQUAL
+						ret_node.ntype = equal(args_list[0].ntype.clone(), args_list[1].ntype.clone());
+					}
+					"NE" => {
+						//NOT EQUAL
+					}
+					"G" => {
+						//GREATER
+					}
+					"L" => {
+						//LESS
+					}
+					"GE" => {
+						//GREATER OR EQUAL
+					}
+					"LE" => {
+						//LESS OR EQUAL
 					}
 					"read" => {
 						//read from files and return contents
 						//eg: read("folder/filepath.txt");
-						match &*args_list[0].ntype {
-							NodeType::Str(val) => print!("{val}"),
-							NodeType::Int(val) => print!("{val}"),
-							NodeType::Float(val) => print!("{val}"),
-							NodeType::Bool(val) => print!("{val}"),
-							_ => {},
-						}
+						ret_node.ntype = read(args_list[0].ntype.clone());
 					}
 					"write" => {
 						//write to files

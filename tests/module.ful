@@ -1,30 +1,4 @@
 normal_variable = "i am a normal variable";
 li = [[1, 2, 3], [1, 2, 3], [1, 2, 3]];
 
-fun print_list(list, recurse) {
-	print("list[");
-	if recurse {
-		print_list(list[0], 0);
-	}
-	else {
-		print(list[0]);
-	}
-	print(", ");
-	if recurse {
-		print_list(list[1], 0);
-	}
-	else {
-		print(list[1]);
-	}
-	print(", ");
-	if recurse {
-		print_list(list[2], 0);
-	}
-	else {
-		print(list[2]);
-	}
-	print("]");
-	return recurse;
-}
-
-print_list(li, 1);
+print(read("tokens.txt"));
