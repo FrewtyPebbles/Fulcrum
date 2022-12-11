@@ -1,5 +1,5 @@
 # Fulcrum 0.4.0
-A fast and straight forward scripting language with a tiny binary and a functional programming paradigm.
+A fast and straight forward scripting language with a tiny binary and a functional programming paradigm. 
 
 ## Documentation
 
