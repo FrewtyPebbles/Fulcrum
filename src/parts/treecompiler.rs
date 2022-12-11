@@ -50,8 +50,8 @@ pub fn compile_tree(tokenlist:Vec<Token>) {
 			Token::Variable(name) => {
 				variable(*name.clone(), &mut stack_buffer);
 			},
-			Token::Assign(name) => {
-				assign(*name.clone(), &mut stack_buffer);
+			Token::Assign => {
+				assign(&mut stack_buffer);
 			},
 			Token::Return => {
 				return_val(&mut stack_buffer);

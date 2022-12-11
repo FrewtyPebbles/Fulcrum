@@ -1,31 +1,8 @@
-fun exp(base, exponent) {
-	fun exp_r(base_r, exponent_r) {
-		base_r = mul(base_r, base);
-		exponent_r = sub(exponent_r, 1);
-		if exponent_r {
-			return exp_r(base_r, exponent_r);
-		}
-		else {
-			return base_r;
-		}
-	}
-	return exp_r(base, sub(exponent, 1));
-}
-
-fun executor(val, function) {
-	return function(val);
-}
-
-print(add(exp(5, 5), "\n"));
-
-print(
-	add(
-		executor(
-			20,
-			fun runner(val) {
-				return mul(val, 2);
-			}
-		),
-		"\n"
-	)
-);
+if true {board = [[1,2],2,3];
+art = 1;
+print(art);
+print(board[0][1]);
+board[0][art] = 7;
+art = board[0][1];
+print(art);
+print(board[0][1]);}

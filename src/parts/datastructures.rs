@@ -20,7 +20,7 @@ pub enum Token {
 	Variable(Box<String>),
 	IndexStart,
 	IndexEnd,
-	Assign(Box<String>),
+	Assign,
 	Return,
 	EndLine,
 	Delimeter,

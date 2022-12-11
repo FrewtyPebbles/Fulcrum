@@ -50,6 +50,11 @@ fn ends(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	let mut last_node = *stack_buffer[last_sb].0.clone();
 	stack_buffer.pop();
 	let last_sb = stack_buffer.len() - 1;
+	// let last_inner = stack_buffer[last_sb].0.args.len();
+	// if if last_inner >= 1 {*stack_buffer[last_sb].0.scope[last_inner as usize-1].ntype.clone()} else {NodeType::None} == NodeType::Assign {
+		
+	// 	stack_buffer[last_sb].0.args[last_inner].args.push(Box::new(last_node));
+	// }
 	if *stack_buffer[last_sb].1 {
 		stack_buffer[last_sb].0.args.push(Box::new(last_node));
 	}
@@ -84,6 +89,21 @@ pub fn scope_start(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 
 pub fn literal(token:Token, mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	let last_sb = stack_buffer.len() - 1;
+	// let inner_len = stack_buffer[last_sb].0.scope.len() as i128;
+	// if if inner_len >= 1 {*stack_buffer[last_sb].0.scope[inner_len as usize-1].ntype.clone()} else {NodeType::None} == NodeType::Assign {
+	// 	stack_buffer[last_sb].0.scope.last_mut().unwrap().args.push(Box::new(StackNode {
+	// 		operation: Box::new(String::new()),
+	// 		ntype: match token {
+	// 			Token::StringLit(val) => Box::new(NodeType::Str(val)),
+	// 			Token::IntLit(val) => Box::new(NodeType::Int(val)),
+	// 			Token::FloatLit(val) => Box::new(NodeType::Float(val)),
+	// 			Token::BooleanLit(val) => Box::new(NodeType::Bool(val)),
+	// 			_ => Box::new(NodeType::Int(Box::new(0))),
+	// 		},
+	// 		args: Box::new(vec![]),
+	// 		scope: Box::new(vec![])
+	// 	}));
+	// }
 	if *stack_buffer[last_sb].1 {
 		match token {
 			Token::StringLit(val) => stack_buffer[last_sb].0.args.push(Box::new(StackNode {
@@ -164,13 +184,27 @@ pub fn variable(name:String, mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool
 	}
 }
 
-pub fn assign(name:String, mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn assign(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+	
+	let last_sb = stack_buffer.len() - 1;
+	let last_in_last_children = stack_buffer[last_sb].0.scope.last().unwrap().clone();
+	stack_buffer[last_sb].0.scope.pop();
 	stack_buffer.push((Box::new(StackNode {
-		operation: Box::new(name),
+		operation: Box::new(String::new()),
 		ntype: Box::new(NodeType::Assign),
-		args: Box::new(vec![]),
+		args: Box::new(vec![last_in_last_children]),
 		scope: Box::new(vec![]),
 	}), Box::new(true)));
+	// let last_sb = stack_buffer.len() - 1;
+	// let last_node = stack_buffer[last_sb].0.clone();
+	// stack_buffer.pop();
+	// stack_buffer.push((Box::new(StackNode {
+	// 	operation: Box::new(String::new()),
+	// 	ntype: Box::new(NodeType::Assign),
+	// 	args: Box::new(vec![last_node]),
+	// 	scope: Box::new(vec![]),
+	// }), Box::new(true)));
+	// println!("{:?}", stack_buffer);
 }
 
 pub fn return_val(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {

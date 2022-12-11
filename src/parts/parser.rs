@@ -1,8 +1,8 @@
-use std::io::{stdin, Read, self};
+use std::{io::{stdin, Read, self}, rc::Rc, cell::RefCell};
 
 use indexmap::IndexMap;
 
-use super::{datastructures::{StackNode, NodeType}, std::standard::{add, sub, mul, div, read, equal, notequal, greater, less, greaterequal, lessequal}};
+use super::{datastructures::{StackNode, NodeType}, std::standard::{add, sub, mul, div, read, equal, notequal, greater, less, greaterequal, lessequal, filewrite, or, and}};
 
 pub fn parse_tree(mut root:Box<StackNode>){
 	//Variables
@@ -10,19 +10,67 @@ pub fn parse_tree(mut root:Box<StackNode>){
 	let mut garbage_stack:Box<Vec<Box<Vec<Box<String>>>>> = Box::new(vec![]);
 	let mut user_ret = Box::new(StackNode::default());
 	user_ret.ntype = Box::new(NodeType::None);
-	user_ret.ntype = Box::new(NodeType::None);
 	parse_node(&mut user_ret, &mut Box::new(true), root.clone(), &mut stack, &mut garbage_stack);
 }
 
 fn push_to_stack (mut current_node:Box<StackNode>, mut node_to_push:Box<StackNode>, mut stack:&mut Box<Vec<Box<IndexMap<String, Box<StackNode>>>>>, mut garbage_stack:&mut Vec<Box<Vec<Box<String>>>>) {
-	let mut st_end:usize = stack.len()-1;
-	for (st_num, mut layer) in stack.iter_mut().enumerate().rev() {
-		if layer.contains_key(&*current_node.operation.clone()) {
-			*layer.get_mut(&*current_node.operation).unwrap() = node_to_push.clone();
-			return;
+	if *current_node.ntype == NodeType::Index {
+		// assign to index of variable
+		fn rec_get_ind(indexes_vector:Vec<usize>, mut var:&mut StackNode, curr_node: StackNode, node_to_push: Box<StackNode>, mut args_list: Box<Vec<Box<StackNode>>>, mut stack:&mut Box<Vec<Box<IndexMap<String, Box<StackNode>>>>>, mut garbage_stack:&mut Vec<Box<Vec<Box<String>>>>) {
+			
+			for ind in indexes_vector.iter().rev() {
+				var = &mut var.args[*ind];
+			}
+			*var = *node_to_push;
+		}
+		fn rec_get_var(curr_node:StackNode, mut indexes_vector:&mut Vec<usize>, mut stack:&mut Box<Vec<Box<IndexMap<String, Box<StackNode>>>>>, mut garbage_stack:&mut Vec<Box<Vec<Box<String>>>>) -> Box<String> {
+			if *curr_node.ntype == NodeType::Variable {
+				return curr_node.operation.clone();
+			}
+			else if *curr_node.ntype == NodeType::Index{
+				let mut user_ret = Box::new(StackNode::default());
+				user_ret.ntype = Box::new(NodeType::None);
+				let args_list = parse_node_list(&mut user_ret, false, curr_node.args.clone(), &mut stack, &mut Box::new(garbage_stack.clone()));
+				match *args_list[0].ntype.clone() {
+					NodeType::Str(_) => todo!("hashmap implementation"),
+					NodeType::Int(val) => {indexes_vector.push(*val as usize)},
+					NodeType::Float(val) => {indexes_vector.push(*val as usize)},
+					NodeType::Bool(val) => {indexes_vector.push(*val as usize)},
+					_ => todo!(),
+				}
+				return rec_get_var(*curr_node.args[1].clone(), indexes_vector, stack, garbage_stack);
+			}
+			Box::new(String::new())
+		}
+		let mut st_end:usize = stack.len()-1;
+		let mut indexes_vector:Vec<usize> = vec![];
+		let ind_key = *rec_get_var(*current_node.clone(), &mut indexes_vector, stack, garbage_stack);
+		// let mut stack_ref_counter = Rc::new(RefCell::new(stack));
+		// let mut itter_stack = Rc::clone(&stack_ref_counter);
+		// let mut stackb1 = Rc::clone(&itter_stack);
+		// let mut stackb2 = Rc::clone(&stackb1);
+		let mut stackclone = stack.clone();
+		for (st_num, mut layer) in stack.iter_mut().enumerate().rev() {
+			if layer.contains_key(&ind_key.clone()) {
+				let mut user_ret = Box::new(StackNode::default());
+				user_ret.ntype = Box::new(NodeType::None);
+				let mut args_list = parse_node_list(&mut user_ret, false, current_node.args.clone(), &mut stackclone.clone(), &mut Box::new(garbage_stack.clone()));
+				rec_get_ind(indexes_vector, &mut *layer.get_mut(&ind_key).unwrap(), *current_node.clone(), node_to_push.clone(), args_list, &mut stackclone.clone(), &mut Box::new(garbage_stack.clone()));
+				//println!("layer===={:?}", layer);
+				break;
+			}
 		}
 	}
-	stack[st_end].insert(*current_node.operation.clone(), node_to_push.clone());
+	else {
+		let mut st_end:usize = stack.len()-1;
+		for (st_num, mut layer) in stack.iter_mut().enumerate().rev() {
+			if layer.contains_key(&*current_node.operation.clone()) {
+				*layer.get_mut(&*current_node.operation).unwrap() = node_to_push.clone();
+				return;
+			}
+		}
+		stack[st_end].insert(*current_node.operation.clone(), node_to_push.clone());
+	}
 }
 
 fn parse_node_list(mut user_return:&mut Box<StackNode>, is_scope:bool, mut node_list:Box<Vec<Box<StackNode>>>, mut stack:&mut Box<Vec<Box<IndexMap<String, Box<StackNode>>>>>, mut garbage_stack:&mut Box<Vec<Box<Vec<Box<String>>>>>) -> Box<Vec<Box<StackNode>>> {
@@ -73,7 +121,7 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 	let mut ret_node:Box<StackNode> = Box::new(StackNode::default());
 	*ret_node.ntype = NodeType::None;
 	if **executing {
-		if *node.ntype != NodeType::Def {
+		if !vec![NodeType::Def].contains(&*node.ntype.clone()) {
 			args_list = parse_node_list(&mut user_return, false, node.args.clone(), &mut stack, &mut garbage_stack);
 		}
 		match *node.ntype {
@@ -104,6 +152,12 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 					}
 					"div" => {
 						ret_node.ntype = div(args_list[0].ntype.clone(), args_list[1].ntype.clone());
+					}
+					"and" => {
+						ret_node.ntype = and(args_list[0].ntype.clone(), args_list[1].ntype.clone());
+					}
+					"or" => {
+						ret_node.ntype = or(args_list[0].ntype.clone(), args_list[1].ntype.clone());
 					}
 					"N" => {
 						//NOT
@@ -149,17 +203,11 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 						//arg1 is the file name, arg3 is writemode (append or truncate or nothing for default(the default is truncate))
 						//arg2 is the content to write to the file.
 						//eg: write("folder/filepath.txt", "FulcrumRS is a cool language.", "a"|"t"|None);
-						match &*args_list[0].ntype {
-							NodeType::Str(val) => print!("{val}"),
-							NodeType::Int(val) => print!("{val}"),
-							NodeType::Float(val) => print!("{val}"),
-							NodeType::Bool(val) => print!("{val}"),
-							_ => {},
-						}
+						ret_node.ntype = filewrite(args_list[0].ntype.clone(), args_list[1].ntype.clone(), args_list[2].ntype.clone());
 					}
 					"input" => {
 						let mut ret_val = String::new();
-						io::Write::flush(&mut io::stdout()).expect("flush failed!");
+						io::Write:: flush(&mut io::stdout()).expect("flush failed!");
 						stdin().read_line(&mut ret_val).unwrap();
 						*ret_node.ntype = NodeType::Str(Box::new(String::from(String::from(ret_val.strip_suffix("\n").unwrap()).strip_suffix("\r").unwrap())))
 					}
@@ -229,14 +277,44 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 				*ret_node = StackNode { operation: node.operation, ntype: node.ntype, args: node.args, scope: node.scope };
 			},
 			NodeType::Assign => {
-				push_to_stack(node, args_list[0].clone(), &mut stack, &mut garbage_stack);
-				// if !stack.contains_key(&*node.operation) {
-				// 	let gs_len = garbage_stack.len()-1;
-				// 	garbage_stack[gs_len].push(node.operation.clone());
-				// 	stack.insert(*node.operation, args_list[0].clone());
-				// }
-				// else {
-				// 	*stack.get_mut(&*node.operation).unwrap() = Box::new(*(*args_list)[0].clone());
+				//println!("LHS +++ {:?}", node.args[0]);
+				push_to_stack(node.args[0].clone(), args_list[1].clone(), &mut stack, &mut garbage_stack);
+				//println!("{:?}", stack);
+				// let mut itter_node = node.clone();
+				// let mut indexes:Vec<StackNode> = vec![];
+				// loop {
+				// 	if *itter_node.args[0].ntype == NodeType::Index {
+				// 		itter_node = itter_node.args[0];
+				// 		indexes.push(*itter_node.args[0]);
+				// 	}
+				// 	else if *itter_node.args[1].ntype == NodeType::Variable && *node.args[1].ntype == NodeType::Index {
+				// 		let mut st_end:usize = stack.len()-1;
+				// 		let mut modify = false;
+				// 		for (st_num, mut layer) in stack.iter_mut().enumerate().rev() {
+				// 			if layer.contains_key(&*itter_node.args[1].operation.clone()) {
+				// 				*layer.get_mut(&*itter_node.args[1].operation.clone()).unwrap() = args_list[1].clone();
+				// 				modify = true;
+				// 				break;
+				// 			}
+				// 		}
+				// 		if !modify {
+				// 			stack[st_end].insert(*itter_node.args[1].operation.clone(), args_list[1].clone());
+				// 		}
+				// 		break;
+				// 	}
+				// 	else if *itter_node.args[1].ntype == NodeType::Variable {
+				// 		for (st_num, mut layer) in stack.iter_mut().enumerate().rev() {
+				// 			if layer.contains_key(&*itter_node.args[1].operation.clone()) {
+				// 				*layer.get_mut(&*itter_node.args[1].operation.clone()).unwrap() = args_list[1].clone();
+				// 				modify = true;
+				// 				break;
+				// 			}
+				// 		}
+				// 		if !modify {
+				// 			stack[st_end].insert(*itter_node.args[1].operation.clone(), args_list[1].clone());
+				// 		}
+				// 		break;
+				// 	}
 				// }
 			},
 			NodeType::Variable => {
@@ -283,7 +361,7 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 						*ret_node.ntype = NodeType::Bool(Box::new(false));
 					}
 					"elif" => {
-						println!("{:?}", node);
+						//println!("{:?}", node);
 						match &*args_list[0].ntype {
 							NodeType::Str(val) => {
 								if **val != "" {

@@ -1,4 +1,4 @@
-use std::fs;
+use std::fs::{self, OpenOptions, File};
 
 use crate::parts::datastructures::NodeType;
 
@@ -30,6 +30,74 @@ pub fn add(mut lhs:Box<NodeType>, mut rhs:Box<NodeType>) -> Box<NodeType> {
 			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val && if *val2 >= 1 {true} else {false}))),
 			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val && if *val2 >= 1.0 {true} else {false}))),
 			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val && *val2))),
+			_ => {Box::new(NodeType::Bool(Box::new(false)))},
+		},
+		_ => {Box::new(NodeType::Bool(Box::new(false)))},
+	}
+}
+
+pub fn and(mut lhs:Box<NodeType>, mut rhs:Box<NodeType>) -> Box<NodeType> {
+	match *lhs {
+		NodeType::Str(val) => match *rhs {
+			NodeType::Str(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			NodeType::Int(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			NodeType::Float(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			NodeType::Bool(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			_ => {Box::new(NodeType::Bool(Box::new(false)))},
+		},
+		NodeType::Int(val) => match *rhs {
+			NodeType::Str(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val != 0 && *val2 != 0))),
+			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val != 0 && *val2 != 0.0))),
+			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val != 0 && *val2))),
+			_ => {Box::new(NodeType::Bool(Box::new(false)))},
+		},
+		NodeType::Float(val) => match *rhs {
+			NodeType::Str(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val != 0.0 && *val2 != 0))),
+			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val != 0.0 && *val2 != 0.0))),
+			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val != 0.0&& *val2))),
+			_ => {Box::new(NodeType::Bool(Box::new(false)))},
+		},
+		NodeType::Bool(val) => match *rhs {
+			NodeType::Str(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val && if *val2 >= 1 {true} else {false}))),
+			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val && if *val2 >= 1.0 {true} else {false}))),
+			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val && *val2))),
+			_ => {Box::new(NodeType::Bool(Box::new(false)))},
+		},
+		_ => {Box::new(NodeType::Bool(Box::new(false)))},
+	}
+}
+
+pub fn or(mut lhs:Box<NodeType>, mut rhs:Box<NodeType>) -> Box<NodeType> {
+	match *lhs {
+		NodeType::Str(val) => match *rhs {
+			NodeType::Str(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			NodeType::Int(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			NodeType::Float(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			NodeType::Bool(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			_ => {Box::new(NodeType::Bool(Box::new(false)))},
+		},
+		NodeType::Int(val) => match *rhs {
+			NodeType::Str(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val != 0 || *val2 != 0))),
+			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val != 0 || *val2 != 0.0))),
+			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val != 0 || *val2))),
+			_ => {Box::new(NodeType::Bool(Box::new(false)))},
+		},
+		NodeType::Float(val) => match *rhs {
+			NodeType::Str(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val != 0.0 || *val2 != 0))),
+			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val != 0.0 || *val2 != 0.0))),
+			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val != 0.0 || *val2))),
+			_ => {Box::new(NodeType::Bool(Box::new(false)))},
+		},
+		NodeType::Bool(val) => match *rhs {
+			NodeType::Str(val2) => Box::new(NodeType::Str(Box::new(format!("{val}{val2}")))),
+			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val || if *val2 >= 1 {true} else {false}))),
+			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val || if *val2 >= 1.0 {true} else {false}))),
+			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val || *val2))),
 			_ => {Box::new(NodeType::Bool(Box::new(false)))},
 		},
 		_ => {Box::new(NodeType::Bool(Box::new(false)))},
@@ -188,7 +256,44 @@ pub fn read(mut filepath:Box<NodeType>) -> Box<NodeType> {
 		_ => {Box::new(NodeType::Bool(Box::new(false)))},
 	}
 }
-pub fn write(mut filepath:Box<NodeType>, mut content:Box<NodeType>, mut writemode:Box<NodeType>) -> Box<NodeType> {
+pub fn filewrite(mut filepath:Box<NodeType>, mut content:Box<NodeType>, mut writemode:Box<NodeType>) -> Box<NodeType> {
+	match *filepath.clone() {
+		NodeType::Str(filep) => {
+			match *writemode.clone() {
+				NodeType::Str(wm) => {
+					match *content.clone() {
+						NodeType::Str(cont) => {
+							use std::io::Write;
+							let mut file:File;
+							let mut openopt:&mut OpenOptions = &mut OpenOptions::new();
+							match &*wm.to_lowercase().as_str() {
+								"a" => {
+									openopt = openopt.write(true).create(true).append(true);
+								}
+								"t" => {
+									openopt = openopt.write(true).create(true).truncate(true);
+								}
+								_ => {}
+							}
+							match openopt.open(*filep) {
+								Ok(val) => {
+									file = val;
+									write!(file, "{}", cont);
+								},
+								Err(val) => {
+									eprintln!("{val}");
+								},
+							}
+						},
+						_ => {},
+					}
+				},
+				_ => {},
+			}
+		},
+		_ => {},
+	}
+	
 	Box::new(NodeType::Bool(Box::new(false)))
 }
 
@@ -216,12 +321,12 @@ pub fn equal(mut lhs:Box<NodeType>, mut rhs:Box<NodeType>) -> Box<NodeType> {
 			_ => {Box::new(NodeType::Bool(Box::new(false)))},
 		},
 		NodeType::Bool(val) => match *rhs {
-			NodeType::Str(val2) => Box::new(NodeType::Str(Box::new((*val2 == format!("{val}")).to_string()))),
+			NodeType::Str(val2) => Box::new(NodeType::Bool(Box::new(*val2 == format!("{val}")))),
 			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new((*val == if *val2 >= 1 {true} else {false})))),
 			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new((*val == if *val2 >= 1.0 {true} else {false})))),
 			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new((*val == *val2)))),
 			_ => {Box::new(NodeType::Bool(Box::new(false)))},
-		},
+		}
 		_ => {Box::new(NodeType::Bool(Box::new(false)))},
 	}
 }
@@ -395,3 +500,4 @@ pub fn greaterequal(mut lhs:Box<NodeType>, mut rhs:Box<NodeType>) -> Box<NodeTyp
 		_ => {Box::new(NodeType::Bool(Box::new(false)))},
 	}
 }
+

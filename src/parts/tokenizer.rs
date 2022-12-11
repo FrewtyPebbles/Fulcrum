@@ -3,7 +3,7 @@ use crate::parts::treecompiler::compile_tree;
 use super::datastructures::Token;
 
 pub fn tokenize (file_content:String, file_path:String) {//create tokens from the file
-
+	// TODO: Rework tree compiler to work on a single stack with more consistent rules.
 	//buffers
 	let mut tokenlist:Vec<Token> = vec![];
 	let mut charbuff:String = String::new();
@@ -58,13 +58,13 @@ pub fn tokenize (file_content:String, file_path:String) {//create tokens from th
 				match character {
 					'=' => {
 
-						let mut newtok:Box<String> = Box::new(String::new());
-						match tokenlist.last().unwrap() {
-							Token::Variable(name) => newtok = Box::new(*name.clone()),
-							_ => {}
-						}
-						tokenlist.pop();
-						tokenlist.push(Token::Assign(newtok))
+						// let mut newtok:Box<String> = Box::new(String::new());
+						// match tokenlist.last().unwrap() {
+						// 	Token::Variable(name) => newtok = Box::new(*name.clone()),
+						// 	_ => {}
+						// }
+						// tokenlist.pop();
+						tokenlist.push(Token::Assign);
 					}
 					'{' => {
 						tokenlist.push(Token::StartScope);
