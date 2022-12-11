@@ -83,7 +83,7 @@ Functions in fulcrum return the result of their operation.
 
  - `GE(val1, val2)` : Tests if `val1` is greater than or equal to `val2`.
 
- - `LE(val1, val2)` : Tests if `val1` is greater than or equal to `val2`.
+ - `LE(val1, val2)` : Tests if `val1` is less than or equal to `val2`.
 
  - `and(condition1, condition2)` : Tests if both conditions are true and returns boolean.
 
