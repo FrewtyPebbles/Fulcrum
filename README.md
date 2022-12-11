@@ -187,7 +187,10 @@ fun tictactoe() {
 		# check for a winner
 		is_winner = check_winner();
 		if is_winner {
+			write("tictactoe_wins.txt", add(is_winner, ", "), "a");
 			print(add(add("The winner is: ", is_winner), "\n"));
+			print("Previous wins:\n");
+			print(read("tictactoe_wins.txt"));
 			return is_winner;
 		}
 
