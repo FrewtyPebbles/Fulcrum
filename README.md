@@ -1,4 +1,4 @@
-# Fulcrum 0.3.0
+# Fulcrum 0.4.0
 A fast and straight forward scripting language with a tiny binary.
 
 ## Documentation
@@ -102,15 +102,70 @@ Functions in fulcrum return the result of their operation.
 Tic Tac Toe:
 ```
 # tictactoe.ful
-
 fun tictactoe() {
 	# Board will act as a global that will hold the state of the tic tac toe board.
 	board = [
 		# 1   2   3
-		[" "," "," "], #1
-		[" "," "," "], #2
-		[" "," "," "]  #3
+		[" "," "," "], #a
+		[" "," "," "], #b
+		[" "," "," "]  #c
 	];
+
+	fun check_winner() {
+		#horizontal
+		if E(board[0], ["O", "O", "O"]) {
+			return "O";
+		}
+		elif E(board[0], ["X", "X", "X"]) {
+			return "X";
+		}
+		elif E(board[1], ["O", "O", "O"]) {
+			return "O";
+		}
+		elif E(board[1], ["X", "X", "X"]) {
+			return "X";
+		}
+		elif E(board[2], ["O", "O", "O"]) {
+			return "O";
+		}
+		elif E(board[2], ["X", "X", "X"]) {
+			return "X";
+		}
+		#vertical
+		elif and(and(E(board[0][0], "O"), E(board[1][0], "O")), E(board[2][0], "O")) {
+			return "O";
+		}
+		elif and(and(E(board[0][0], "X"), E(board[1][0], "X")), E(board[2][0], "X")) {
+			return "X";
+		}
+		elif and(and(E(board[0][1], "O"), E(board[1][1], "O")), E(board[2][1], "O")) {
+			return "O";
+		}
+		elif and(and(E(board[0][1], "X"), E(board[1][1], "X")), E(board[2][1], "X")) {
+			return "X";
+		}
+		elif and(and(E(board[0][2], "O"), E(board[1][2], "O")), E(board[2][2], "O")) {
+			return "O";
+		}
+		elif and(and(E(board[0][2], "X"), E(board[1][2], "X")), E(board[2][2], "X")) {
+			return "X";
+		}
+		#diagonal
+		elif and(and(E(board[0][0], "O"), E(board[1][1], "O")), E(board[2][2], "O")) {
+			return "O";
+		}
+		elif and(and(E(board[0][0], "X"), E(board[1][1], "X")), E(board[2][2], "X")) {
+			return "X";
+		}
+		elif and(and(E(board[2][0], "O"), E(board[1][1], "O")), E(board[0][2], "O")) {
+			return "O";
+		}
+		elif and(and(E(board[2][0], "X"), E(board[1][1], "X")), E(board[0][2], "X")) {
+			return "X";
+		}
+
+		return "";
+	}
 
 	fun update_board(current_player) {
 		# This function starts a turn for a player.
@@ -129,6 +184,13 @@ fun tictactoe() {
 		# render the board at the start of the turn
 		print_board();
 
+		# check for a winner
+		is_winner = check_winner();
+		if is_winner {
+			print(add(add("The winner is: ", is_winner), "\n"));
+			return is_winner;
+		}
+
 		# Get horizontal input.
 		print("horizontal:");
 		x = sub(INT(input()),1);
@@ -142,13 +204,13 @@ fun tictactoe() {
 		
 		# Check who the current player is to recursively call update board as the other player.
 		if E(current_player, "X") {
-			update_board("O");
+			return update_board("O");
 		}
 		else {
-			update_board("X");
+			return update_board("X");
 		}
 	}
-	update_board("X");
+	return update_board("X");
 }
 
 # Run the game

@@ -1,6 +1,6 @@
 use std::fs::{self, OpenOptions, File};
 
-use crate::parts::datastructures::NodeType;
+use crate::parts::datastructures::{NodeType, StackNode};
 
 pub fn add(mut lhs:Box<NodeType>, mut rhs:Box<NodeType>) -> Box<NodeType> {
 	match *lhs {
@@ -297,70 +297,78 @@ pub fn filewrite(mut filepath:Box<NodeType>, mut content:Box<NodeType>, mut writ
 	Box::new(NodeType::Bool(Box::new(false)))
 }
 
-pub fn equal(mut lhs:Box<NodeType>, mut rhs:Box<NodeType>) -> Box<NodeType> {
-	match *lhs {
-		NodeType::Str(mut val) => match *rhs {
+pub fn equal(mut lhs:Box<StackNode>, mut rhs:Box<StackNode>) -> Box<NodeType> {
+	match *lhs.ntype {
+		NodeType::Str(mut val) => match *rhs.ntype {
 			NodeType::Str(val2) => Box::new(NodeType::Bool(Box::new(*val == *val2))),
 			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val == format!("{val2}")))),
 			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val == format!("{val2}")))),
 			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val == format!("{val2}")))),
 			_ => {Box::new(NodeType::Bool(Box::new(false)))},
 		},
-		NodeType::Int(val) => match *rhs {
+		NodeType::Int(val) => match *rhs.ntype {
 			NodeType::Str(val2) => Box::new(NodeType::Bool(Box::new(*val2 == format!("{val}")))),
 			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val == *val2))),
 			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val == *val2 as i128))),
 			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val == *val2 as i128))),
 			_ => {Box::new(NodeType::Bool(Box::new(false)))},
 		},
-		NodeType::Float(val) => match *rhs {
+		NodeType::Float(val) => match *rhs.ntype {
 			NodeType::Str(val2) => Box::new(NodeType::Bool(Box::new(*val2 == format!("{val}")))),
 			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val == *val2 as f64))),
 			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val == *val2 as f64))),
 			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val == if *val2 {1.0} else {0.0}))),
 			_ => {Box::new(NodeType::Bool(Box::new(false)))},
 		},
-		NodeType::Bool(val) => match *rhs {
+		NodeType::Bool(val) => match *rhs.ntype {
 			NodeType::Str(val2) => Box::new(NodeType::Bool(Box::new(*val2 == format!("{val}")))),
 			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new((*val == if *val2 >= 1 {true} else {false})))),
 			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new((*val == if *val2 >= 1.0 {true} else {false})))),
 			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new((*val == *val2)))),
 			_ => {Box::new(NodeType::Bool(Box::new(false)))},
 		}
+		NodeType::Vector => match *rhs.ntype {
+			NodeType::Vector => Box::new(NodeType::Bool(Box::new(lhs.args.iter().zip(&*rhs.args).all(|(a, b)| **a == **b)))),
+			_ => {Box::new(NodeType::Bool(Box::new(false)))},
+		}
 		_ => {Box::new(NodeType::Bool(Box::new(false)))},
 	}
 }
 
-pub fn notequal(mut lhs:Box<NodeType>, mut rhs:Box<NodeType>) -> Box<NodeType> {
-	match *lhs {
-		NodeType::Str(mut val) => match *rhs {
+pub fn notequal(mut lhs:Box<StackNode>, mut rhs:Box<StackNode>) -> Box<NodeType> {
+	match *lhs.ntype {
+		NodeType::Str(mut val) => match *rhs.ntype {
 			NodeType::Str(val2) => Box::new(NodeType::Bool(Box::new(*val != *val2))),
 			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val != format!("{val2}")))),
 			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val != format!("{val2}")))),
 			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val != format!("{val2}")))),
 			_ => {Box::new(NodeType::Bool(Box::new(false)))},
 		},
-		NodeType::Int(val) => match *rhs {
+		NodeType::Int(val) => match *rhs.ntype {
 			NodeType::Str(val2) => Box::new(NodeType::Bool(Box::new(*val2 != format!("{val}")))),
 			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val != *val2))),
 			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val != *val2 as i128))),
 			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val != *val2 as i128))),
 			_ => {Box::new(NodeType::Bool(Box::new(false)))},
 		},
-		NodeType::Float(val) => match *rhs {
+		NodeType::Float(val) => match *rhs.ntype {
 			NodeType::Str(val2) => Box::new(NodeType::Bool(Box::new(*val2 != format!("{val}")))),
 			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new(*val != *val2 as f64))),
 			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new(*val != *val2 as f64))),
 			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new(*val != if *val2 {1.0} else {0.0}))),
 			_ => {Box::new(NodeType::Bool(Box::new(false)))},
 		},
-		NodeType::Bool(val) => match *rhs {
+		NodeType::Bool(val) => match *rhs.ntype {
 			NodeType::Str(val2) => Box::new(NodeType::Str(Box::new((*val2 != format!("{val}")).to_string()))),
 			NodeType::Int(val2) => Box::new(NodeType::Bool(Box::new((*val != if *val2 >= 1 {true} else {false})))),
 			NodeType::Float(val2) => Box::new(NodeType::Bool(Box::new((*val != if *val2 >= 1.0 {true} else {false})))),
 			NodeType::Bool(val2) => Box::new(NodeType::Bool(Box::new((*val != *val2)))),
 			_ => {Box::new(NodeType::Bool(Box::new(false)))},
 		},
+		NodeType::Vector => match *rhs.ntype {
+			NodeType::Vector => Box::new(NodeType::Bool(Box::new(!lhs.args.iter().zip(&*rhs.args).all(|(a, b)| **a == **b)))),
+			_ => {Box::new(NodeType::Bool(Box::new(false)))},
+		}
 		_ => {Box::new(NodeType::Bool(Box::new(false)))},
 	}
 }

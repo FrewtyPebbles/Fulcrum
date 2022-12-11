@@ -171,11 +171,11 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 					}
 					"E" => {
 						//EQUAL
-						ret_node.ntype = equal(args_list[0].ntype.clone(), args_list[1].ntype.clone());
+						ret_node.ntype = equal(args_list[0].clone(), args_list[1].clone());
 					}
 					"NE" => {
 						//NOT EQUAL
-						ret_node.ntype = notequal(args_list[0].ntype.clone(), args_list[1].ntype.clone());
+						ret_node.ntype = notequal(args_list[0].clone(), args_list[1].clone());
 					}
 					"G" => {
 						//GREATER
@@ -322,7 +322,13 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 			},
 			NodeType::Return => {
 				//*user_return.operation = String::from("return");
-				*user_return.ntype = *args_list[0].ntype.clone();
+				if args_list.len() > 0 {
+					*user_return.ntype = *args_list[0].ntype.clone();
+				}
+				else {
+					*user_return.ntype = NodeType::Return;
+				}
+				
 			},
 			NodeType::Condition => {
 				match node.operation.as_str() {

@@ -46,7 +46,7 @@ pub enum NodeType {
 	None
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct StackNode {
 	pub operation: Box<String>,
 	pub ntype:Box<NodeType>,
