@@ -101,6 +101,8 @@ Functions in fulcrum return the result of their operation.
 
 Tic Tac Toe:
 ```
+# tictactoe.ful
+
 fun tictactoe() {
 	# Board will act as a global that will hold the state of the tic tac toe board.
 	board = [
