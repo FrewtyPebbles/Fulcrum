@@ -107,9 +107,9 @@ fun tictactoe() {
 	# Board will act as a global that will hold the state of the tic tac toe board.
 	board = [
 		# 1   2   3
-		[" "," "," "], #a
-		[" "," "," "], #b
-		[" "," "," "]  #c
+		[" "," "," "], #1
+		[" "," "," "], #2
+		[" "," "," "]  #3
 	];
 
 	fun update_board(current_player) {
