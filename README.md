@@ -11,7 +11,7 @@ A fast and straight forward scripting language with a tiny binary and a function
 
  - An extremely minimal and basic syntax.
 
- - An interpreter that is under 1 megabyte in size.
+ - An interpreter that is under 4 megabytes in size.
 
 ## Language Rules:
 
