@@ -700,3 +700,50 @@ pub fn pop_from_array(mut args_list:Box<Vec<Box<StackNode>>>, mut stack:&mut Box
 		}
 	}
 }
+
+pub fn get_len(mut args_list:Box<Vec<Box<StackNode>>>) -> Box<NodeType> {
+	match *args_list[0].ntype.clone() {
+		NodeType::Str(val) => {
+			return Box::new(NodeType::Int(Box::new(val.len() as i128)));
+		},
+		NodeType::Vector => {
+			return Box::new(NodeType::Int(Box::new(args_list[0].args.len() as i128)));
+		},
+		_ => {
+			eprintln!("Invalid type");
+		}
+	}
+	Box::new(NodeType::None)
+}
+
+pub fn get_range(mut args_list:Box<Vec<Box<StackNode>>>) -> Box<StackNode> {
+	let mut vector = StackNode {
+		operation: Box::new(String::new()),
+		ntype: Box::new(NodeType::Vector),
+		args: Box::new(vec![]),
+		scope: Box::new(vec![]),
+	};
+	match *args_list[0].ntype.clone() {
+		NodeType::Int(val1) => {
+			match *args_list[1].ntype.clone() {
+				NodeType::Int(val2) => {
+					for i in *val1..*val2 {
+						vector.args.push(Box::new(StackNode {
+							operation: Box::new(String::new()),
+							ntype: Box::new(NodeType::Int(Box::new(i))),
+							args: Box::new(vec![]),
+							scope: Box::new(vec![]),
+						}));
+					}
+				},
+				_ => {
+					eprintln!("Invalid type");
+				}
+			}
+		},
+		_ => {
+			eprintln!("Invalid type");
+		}
+	}
+	Box::new(vector)
+}

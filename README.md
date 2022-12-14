@@ -1,4 +1,4 @@
-# Fulcrum 0.6.2
+# Fulcrum 0.6.3
 A fast and straight forward scripting language with a tiny binary and a functional programming paradigm. 
 
 ## Documentation
@@ -178,6 +178,10 @@ Functions in fulcrum return the result of their operation.
  - `pop(list)` : pops a value from a list.
  
  - `push(list, value)` : pops a value from a list.
+
+ - `len(string`|`list)` : Returns the len of the first argument.
+
+ - `range(num1, num2)` : Returns a list of integers from num1 to num2.
 
 ## Example Program:
 

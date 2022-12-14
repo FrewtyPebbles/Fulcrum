@@ -2,7 +2,7 @@ use std::{io::{stdin, self}};
 
 use indexmap::IndexMap;
 
-use super::{datastructures::{StackNode, NodeType}, std::standard::{add, sub, mul, div, read, equal, notequal, greater, less, greaterequal, lessequal, filewrite, or, and, in_operator, contains_operator, cat, foreign_function_interface, split, remove_ws, replace, push_to_array, pop_from_array}};
+use super::{datastructures::{StackNode, NodeType}, std::standard::{add, sub, mul, div, read, equal, notequal, greater, less, greaterequal, lessequal, filewrite, or, and, in_operator, contains_operator, cat, foreign_function_interface, split, remove_ws, replace, push_to_array, pop_from_array, get_len, get_range}};
 
 pub fn parse_tree(root:Box<StackNode>, file_path:String){
 	//Variables
@@ -142,6 +142,12 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 					}
 					"pop" => {
 						pop_from_array(args_list, &mut stack);
+					}
+					"len" => {
+						ret_node.ntype = get_len(args_list);
+					}
+					"range" => {
+						ret_node = get_range(args_list);
 					}
 					"FFI" => {
 						ret_node.ntype = foreign_function_interface(args_list);
