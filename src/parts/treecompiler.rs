@@ -1,10 +1,10 @@
-use crate::parts::{tcdefinitions::definitions::{return_val, scope_start}, parser::parse_tree};
+use crate::parts::{tcdefinitions::definitions::{return_val, scope_start, in_operator, break_keyword}, parser::parse_tree};
 
-use super::{datastructures::{Token, StackNode, NodeType}, tcdefinitions::definitions::{func_def, func_call, condition_if, condition_elif, condition_else, statement_end, assign, variable, literal, line_end, scope_end, vector, index, vec_end, end_index}};
+use super::{datastructures::{Token, StackNode, NodeType}, tcdefinitions::definitions::{func_def, func_call, condition_if, condition_elif, condition_else, statement_end, assign, variable, literal, line_end, scope_end, vector, index, vec_end, end_index, loop_for, loop_while, loop_loop}};
 
 
 
-pub fn compile_tree(tokenlist:Vec<Token>) {
+pub fn compile_tree(tokenlist:Vec<Token>, file_path:String) {
 	// tuple 0 = the node and tuple 1 = wether we are in the args or scope of that node
 	let mut stack_buffer:Box<Vec<(Box<StackNode>, Box<bool>)>> = Box::new(vec![(Box::new(StackNode::default()), Box::new(false))]);
 	for (tn, current_token) in tokenlist.iter().enumerate()
@@ -73,10 +73,24 @@ pub fn compile_tree(tokenlist:Vec<Token>) {
 			}
 			Token::Delimeter => {},
 			Token::Void => {
-				
 			},
+			Token::For => {
+				loop_for(&mut stack_buffer);
+			}
+			Token::In => {
+				in_operator(&mut stack_buffer);
+			},
+			Token::While => {
+				loop_while(&mut stack_buffer);
+			},
+			Token::Loop => {
+				loop_loop(&mut stack_buffer);
+			}
+			Token::Break => {
+				break_keyword(&mut stack_buffer);
+			}
 		}
 	}
 	//println!("{:?}", stack_buffer);
-	parse_tree(stack_buffer[0].0.clone());
+	parse_tree(stack_buffer[0].0.clone(), file_path);
 }

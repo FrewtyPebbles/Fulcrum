@@ -509,3 +509,79 @@ pub fn greaterequal(mut lhs:Box<NodeType>, mut rhs:Box<NodeType>) -> Box<NodeTyp
 	}
 }
 
+pub fn contains_operator(mut lhs:&mut Box<StackNode>, mut rhs:Box<StackNode>) -> Box<NodeType> {
+	match *rhs.ntype.clone() {
+		NodeType::Str(val) => {
+			match *lhs.ntype.clone() {
+				NodeType::Str(val2) => {
+					return Box::new(NodeType::Bool(Box::new(val.contains(&*val2))));
+				}
+				NodeType::Int(val2) => {
+					return Box::new(NodeType::Bool(Box::new(val.contains(&format!("{val2}")))));
+				}
+				NodeType::Float(val2) => {
+					return Box::new(NodeType::Bool(Box::new(val.contains(&format!("{val2}")))));
+				}
+				_ => {
+
+				}
+			}
+		},
+		NodeType::Vector => {
+			for item in rhs.args.iter() {
+				if item == lhs {
+					return Box::new(NodeType::Bool(Box::new(false)));
+				}
+			}
+		},
+		_ => todo!(),
+	}
+	Box::new(NodeType::Bool(Box::new(false)))
+}
+
+pub fn in_operator(mut lhs:&mut Box<StackNode>, mut rhs:Box<StackNode>) -> Box<NodeType> {
+	match *rhs.ntype.clone() {
+		NodeType::Str(val) => {
+			match *lhs.ntype.clone() {
+				NodeType::Str(val2) => {
+					return Box::new(NodeType::Bool(Box::new(val.contains(&*val2))));
+				}
+				NodeType::Int(val2) => {
+					return Box::new(NodeType::Bool(Box::new(val.contains(&format!("{val2}")))));
+				}
+				NodeType::Float(val2) => {
+					return Box::new(NodeType::Bool(Box::new(val.contains(&format!("{val2}")))));
+				}
+				_ => {
+
+				}
+			}
+		},
+		NodeType::Vector => {
+			for item in rhs.args.iter() {
+				if item == lhs {
+					return Box::new(NodeType::Bool(Box::new(false)));
+				}
+			}
+		},
+		_ => todo!(),
+	}
+	Box::new(NodeType::Bool(Box::new(false)))
+}
+
+pub fn cat(mut args_list:Box<Vec<Box<StackNode>>>) -> Box<NodeType> {
+	if args_list.len() == 0 {
+		println!("Meow!");
+	}
+	let mut ret = String::new();
+	for arg in args_list.iter() {
+		match *arg.ntype.clone() {
+			NodeType::Str(val) => ret = format!("{ret}{val}"),
+			NodeType::Int(val) => ret = format!("{ret}{val}"),
+			NodeType::Float(val) => ret = format!("{ret}{val}"),
+			NodeType::Bool(val) => ret = format!("{ret}{val}"),
+			_ => {},
+		}
+	}
+	return Box::new(NodeType::Str(Box::new(ret)));
+}

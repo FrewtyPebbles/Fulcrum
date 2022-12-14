@@ -93,6 +93,7 @@ pub fn tokenize (file_content:String, file_path:String) {//create tokens from th
 					//delimeters
 					' '|'\t'|','|';'|')'|']'|'[' => {
 						if charbuff != "" {
+							//keywords
 							if charbuff == "return" {
 								tokenlist.push(Token::Return);
 							}
@@ -107,6 +108,21 @@ pub fn tokenize (file_content:String, file_path:String) {//create tokens from th
 							}
 							else if charbuff == "else" {
 								tokenlist.push(Token::El);
+							}
+							else if charbuff == "for" {
+								tokenlist.push(Token::For);
+							}
+							else if charbuff == "in" {
+								tokenlist.push(Token::In);
+							}
+							else if charbuff == "while" {
+								tokenlist.push(Token::While);
+							}
+							else if charbuff == "loop" {
+								tokenlist.push(Token::Loop);
+							}
+							else if charbuff == "break" {
+								tokenlist.push(Token::Break);
 							}
 							else if vec!["true","t","yes"].contains(&charbuff.to_lowercase().as_str()) {
 								tokenlist.push(Token::BooleanLit(Box::new(true)));
@@ -171,5 +187,5 @@ pub fn tokenize (file_content:String, file_path:String) {//create tokens from th
 		commenting = false;
 	}
 	//println!("{:?}", tokenlist);
-	compile_tree(tokenlist);
+	compile_tree(tokenlist, file_path);
 }

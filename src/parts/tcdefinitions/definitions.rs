@@ -45,6 +45,33 @@ pub fn condition_else(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	}), Box::new(true)));
 }
 
+pub fn loop_for(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+	stack_buffer.push((Box::new(StackNode {
+		operation: Box::new(String::from("for")),
+		ntype: Box::new(NodeType::Loop),
+		args: Box::new(vec![]),
+		scope: Box::new(vec![]),
+	}), Box::new(true)));
+}
+
+pub fn loop_while(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+	stack_buffer.push((Box::new(StackNode {
+		operation: Box::new(String::from("while")),
+		ntype: Box::new(NodeType::Loop),
+		args: Box::new(vec![]),
+		scope: Box::new(vec![]),
+	}), Box::new(true)));
+}
+
+pub fn loop_loop(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+	stack_buffer.push((Box::new(StackNode {
+		operation: Box::new(String::from("loop")),
+		ntype: Box::new(NodeType::Loop),
+		args: Box::new(vec![]),
+		scope: Box::new(vec![]),
+	}), Box::new(true)));
+}
+
 fn ends(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	let last_sb = stack_buffer.len() - 1;
 	let mut last_node = *stack_buffer[last_sb].0.clone();
@@ -89,21 +116,6 @@ pub fn scope_start(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 
 pub fn literal(token:Token, mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	let last_sb = stack_buffer.len() - 1;
-	// let inner_len = stack_buffer[last_sb].0.scope.len() as i128;
-	// if if inner_len >= 1 {*stack_buffer[last_sb].0.scope[inner_len as usize-1].ntype.clone()} else {NodeType::None} == NodeType::Assign {
-	// 	stack_buffer[last_sb].0.scope.last_mut().unwrap().args.push(Box::new(StackNode {
-	// 		operation: Box::new(String::new()),
-	// 		ntype: match token {
-	// 			Token::StringLit(val) => Box::new(NodeType::Str(val)),
-	// 			Token::IntLit(val) => Box::new(NodeType::Int(val)),
-	// 			Token::FloatLit(val) => Box::new(NodeType::Float(val)),
-	// 			Token::BooleanLit(val) => Box::new(NodeType::Bool(val)),
-	// 			_ => Box::new(NodeType::Int(Box::new(0))),
-	// 		},
-	// 		args: Box::new(vec![]),
-	// 		scope: Box::new(vec![])
-	// 	}));
-	// }
 	if *stack_buffer[last_sb].1 {
 		match token {
 			Token::StringLit(val) => stack_buffer[last_sb].0.args.push(Box::new(StackNode {
@@ -195,16 +207,28 @@ pub fn assign(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 		args: Box::new(vec![last_in_last_children]),
 		scope: Box::new(vec![]),
 	}), Box::new(true)));
-	// let last_sb = stack_buffer.len() - 1;
-	// let last_node = stack_buffer[last_sb].0.clone();
-	// stack_buffer.pop();
-	// stack_buffer.push((Box::new(StackNode {
-	// 	operation: Box::new(String::new()),
-	// 	ntype: Box::new(NodeType::Assign),
-	// 	args: Box::new(vec![last_node]),
-	// 	scope: Box::new(vec![]),
-	// }), Box::new(true)));
-	// println!("{:?}", stack_buffer);
+}
+
+pub fn in_operator(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+	let last_sb = stack_buffer.len() - 1;
+	if *stack_buffer[last_sb].0.ntype == NodeType::Loop && *stack_buffer[last_sb].0.operation == "for" {
+		// stack_buffer.push((Box::new(StackNode {
+		// 	operation: Box::new(String::from("in")),
+		// 	ntype: Box::new(NodeType::Operator),
+		// 	args: Box::new(vec![last_in_last_children]),
+		// 	scope: Box::new(vec![]),
+		// }), Box::new(false)));
+	}
+	else {
+		let last_in_last_children = stack_buffer[last_sb].0.args.last().unwrap().clone();
+		stack_buffer[last_sb].0.args.pop();
+		stack_buffer.push((Box::new(StackNode {
+			operation: Box::new(String::from("contains")),
+			ntype: Box::new(NodeType::Operator),
+			args: Box::new(vec![last_in_last_children]),
+			scope: Box::new(vec![]),
+		}), Box::new(true)));
+	}
 }
 
 pub fn return_val(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
@@ -224,6 +248,7 @@ pub fn vector(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
 		scope: Box::new(vec![]),
 	}), Box::new(true)));
 }
+
 pub fn index(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
 	stack_buffer.push((Box::new(StackNode {
 		operation: Box::new(String::new()),
@@ -250,4 +275,14 @@ pub fn end_index(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
 		stack_buffer[last_sb].0.scope.pop();
 		stack_buffer[last_sb].0.scope.push(Box::new(last_node));
 	}
+}
+
+pub fn break_keyword(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
+	let sb_len = stack_buffer.len()-1;
+	stack_buffer[sb_len].0.scope.push(Box::new(StackNode {
+		operation: Box::new(String::new()),
+		ntype: Box::new(NodeType::Break),
+		args: Box::new(vec![]),
+		scope: Box::new(vec![]),
+	}));
 }

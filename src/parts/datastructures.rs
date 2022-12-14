@@ -24,7 +24,12 @@ pub enum Token {
 	Return,
 	EndLine,
 	Delimeter,
-	Void
+	Void,
+	For,
+	In,
+	While,
+	Loop,
+	Break,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -43,6 +48,9 @@ pub enum NodeType {
 	Vector,//(Box<Vec<Box<NodeType>>>),
 	//argument 1 is the value argument 2 is the index
 	Index,
+	Loop,
+	Operator,
+	Break,
 	None
 }
 

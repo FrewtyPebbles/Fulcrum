@@ -1,4 +1,4 @@
-# Fulcrum 0.4.0
+# Fulcrum 0.5.0
 A fast and straight forward scripting language with a tiny binary and a functional programming paradigm. 
 
 ## Documentation
@@ -33,17 +33,26 @@ A fast and straight forward scripting language with a tiny binary and a function
 
  - `return` : Returns a value from a user defined function.
 
+ - `break` : Breaks out of a scope.
+
  - `if` : Prefixes the condition for an if block.
 
  - `elif` : Prefixes the condition for an elif block.
 
  - `else` : Prefixes an else block.
 
+ - `loop` : Prefixes a loop block. Loop blocks will loop indefinitely until they hit a break or return.
+
+ - `while` : Prefixes a while block. while blocks will loop as long as their statement is true.
+
  - `[]` : Wraps a list literal or is used to hold the offset for an index/offset operator.
 
  - `=` : Used to declare or assign to existing variables.
 
  - `"` : Wraps a string literal.
+
+ - `in` : Operator that checks if the left side is in the right side when not used inside a for loop.
+
 
  - `;` : Denotes the end of a line.
 
@@ -52,6 +61,67 @@ A fast and straight forward scripting language with a tiny binary and a function
  - `true`|`yes`|`t` : Aliases for the boolean literal `true`.
 
  - `false`|`no`|`f` : Aliases for the boolean literal `false`.
+
+## Non-traditional Functionalities
+
+ - Loops
+
+```
+loop {
+	print("Loop!\n");
+}
+```
+
+Loops will loop until the path of execution hits a `break` or a `return`.
+
+ - For loops
+
+```
+// String Example
+
+for i in "abc" {
+	print(add(i, "\n"));
+}
+
+// output:
+// a
+// b
+// c
+
+// Integer Example
+
+for i in 3 {
+	print(add(i, "\n"));
+}
+
+// output:
+// 0
+// 1
+// 2
+
+// List Example
+
+for i in ["1", 2.0, 3] {
+	print(add(i, "\n"));
+}
+
+// output:
+// 1
+// 2.0
+// 3
+
+// Variable Example
+
+variable = [0, 1, 2];
+for i in variable {
+	print(add(i, "\n"));
+}
+
+// output:
+// 0
+// 1
+// 2
+```
 
 ## Standard Library Functions:
 
@@ -96,6 +166,12 @@ Functions in fulcrum return the result of their operation.
  - `BOOL(val)` : Casts the type to a Boolean.
 
  - `STRING(val)` : Casts the type to a String.
+
+ - `cat(val1, val2, val3, ...)` : Concatenates multiple values into a string.
+
+ - `pop(list)` : pops a value from a list.
+ 
+ - `push(list, value)` : pops a value from a list.
 
 ## Example Program:
 
