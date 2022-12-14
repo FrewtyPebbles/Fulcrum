@@ -1,4 +1,4 @@
-# Fulcrum 0.5.1
+# Fulcrum 0.6.1
 A fast and straight forward scripting language with a tiny binary and a functional programming paradigm. 
 
 ## Documentation
@@ -168,6 +168,12 @@ Functions in fulcrum return the result of their operation.
  - `STRING(val)` : Casts the type to a String.
 
  - `cat(val1, val2, val3, ...)` : Concatenates multiple values into a string.
+
+ - `split(string, substring)` : Splits a string by a substring.
+
+ - `trim(string)` : Removes the leading and trailing whitespace from a string.
+
+ - `replace(string, substring1, substring2)` : Replaces the substring1 in the string with substring2.
 
  - `pop(list)` : pops a value from a list.
  

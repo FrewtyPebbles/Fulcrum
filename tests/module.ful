@@ -70,11 +70,11 @@ fun tictactoe() {
 		fun print_board() {
 			# this function renders the current board.
 			# board is inherited from top most function and acts as a global.
-			print(add(add(add(add(board[0][0], "|"),board[0][1]),"|"),board[0][2]));
+			print(cat(board[0][0], "|",board[0][1], "|",board[0][2]));
 			print("\n-----\n");
-			print(add(add(add(add(board[1][0], "|"),board[1][1]),"|"),board[1][2]));
+			print(cat(board[1][0], "|",board[1][1], "|",board[1][2]));
 			print("\n-----\n");
-			print(add(add(add(add(board[2][0], "|"),board[2][1]),"|"),board[2][2]));
+			print(cat(board[2][0], "|", board[2][1], "|", board[2][2]));
 			print("\n");
 		}
 		loop {

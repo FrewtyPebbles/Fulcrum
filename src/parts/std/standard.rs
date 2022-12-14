@@ -589,3 +589,59 @@ pub fn cat(mut args_list:Box<Vec<Box<StackNode>>>) -> Box<NodeType> {
 	}
 	return Box::new(NodeType::Str(Box::new(ret)));
 }
+
+pub fn foreign_function_interface(mut args_list:Box<Vec<Box<StackNode>>>) -> Box<NodeType> {
+	return Box::new(NodeType::Str(Box::new(String::new())));
+}
+
+pub fn split(mut args_list:Box<Vec<Box<StackNode>>>) -> Box<StackNode> {
+	let mut vector = StackNode {
+		operation: Box::new(String::new()),
+		ntype: Box::new(NodeType::Vector),
+		args: Box::new(vec![]),
+		scope: Box::new(vec![]),
+	};
+	match *args_list[0].ntype.clone() {
+		NodeType::Str(val) => match *args_list[1].ntype.clone() {
+			NodeType::Str(val2) => {
+				for substr in val.split(val2.as_str()) {
+					vector.args.push(Box::new(StackNode {
+						operation: Box::new(String::new()),
+						ntype: Box::new(NodeType::Str(Box::new(String::from(substr)))),
+						args: Box::new(vec![]),
+						scope: Box::new(vec![]),
+					}));
+				}
+			},
+			_ => {},
+		},
+		_ => {},
+	}
+	return Box::new(vector);
+}
+
+pub fn remove_ws(mut args_list:Box<Vec<Box<StackNode>>>) -> Box<NodeType> {
+	return Box::new(NodeType::Str(Box::new(match *args_list[0].ntype.clone() {
+		NodeType::Str(val) => String::from(val.trim()),
+		_ => {String::new()},
+	})));
+}
+
+pub fn replace(mut args_list:Box<Vec<Box<StackNode>>>) -> Box<NodeType> {
+	return Box::new(NodeType::Str(Box::new(match *args_list[0].ntype.clone() {
+		NodeType::Str(val) => {
+			match *args_list[1].ntype.clone() {
+				NodeType::Str(val1) => {
+					match *args_list[2].ntype.clone() {
+						NodeType::Str(val2) => {
+							String::from(val.replace(val1.as_str(), val2.as_str()))
+						},
+						_ => {String::new()},
+					}
+				},
+				_ => {String::new()},
+			}
+		},
+		_ => {String::new()},
+	})));
+}
