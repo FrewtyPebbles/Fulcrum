@@ -1,4 +1,4 @@
-use std::fs::{self, OpenOptions, File};
+use std::{fs::{self, OpenOptions, File}, path::PathBuf};
 
 use crate::parts::datastructures::{NodeType, StackNode};
 
@@ -248,15 +248,19 @@ pub fn div(mut lhs:Box<NodeType>, mut rhs:Box<NodeType>) -> Box<NodeType> {
 	}
 }
 
-pub fn read(mut filepath:Box<NodeType>) -> Box<NodeType> {
+pub fn read(mut filepath:Box<NodeType>, origin:String) -> Box<NodeType> {
+	let path = PathBuf::from(origin);
+	let dir = path.parent().unwrap();
 	match *filepath {
 		NodeType::Str(val) => {
-			Box::new(NodeType::Str(Box::new(fs::read_to_string(*val).unwrap())))
+			Box::new(NodeType::Str(Box::new(fs::read_to_string(fs::canonicalize(dir).unwrap().join(*val)).unwrap())))
 		},
 		_ => {Box::new(NodeType::Bool(Box::new(false)))},
 	}
 }
-pub fn filewrite(mut filepath:Box<NodeType>, mut content:Box<NodeType>, mut writemode:Box<NodeType>) -> Box<NodeType> {
+pub fn filewrite(mut filepath:Box<NodeType>, mut content:Box<NodeType>, mut writemode:Box<NodeType>, origin:String) -> Box<NodeType> {
+	let path = PathBuf::from(origin);
+	let dir = path.parent().unwrap();
 	match *filepath.clone() {
 		NodeType::Str(filep) => {
 			match *writemode.clone() {
@@ -275,7 +279,7 @@ pub fn filewrite(mut filepath:Box<NodeType>, mut content:Box<NodeType>, mut writ
 								}
 								_ => {}
 							}
-							match openopt.open(*filep) {
+							match openopt.open(fs::canonicalize(dir).unwrap().join(*filep)) {
 								Ok(val) => {
 									file = val;
 									write!(file, "{}", cont);

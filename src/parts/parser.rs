@@ -210,14 +210,14 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 					"read" => {
 						//read from files and return contents
 						//eg: read("folder/filepath.txt");
-						ret_node.ntype = read(args_list[0].ntype.clone());
+						ret_node.ntype = read(args_list[0].ntype.clone(), file_path);
 					}
 					"write" => {
 						//write to files
 						//arg1 is the file name, arg3 is writemode (append or truncate or nothing for default(the default is truncate))
 						//arg2 is the content to write to the file.
 						//eg: write("folder/filepath.txt", "FulcrumRS is a cool language.", "a"|"t"|None);
-						ret_node.ntype = filewrite(args_list[0].ntype.clone(), args_list[1].ntype.clone(), args_list[2].ntype.clone());
+						ret_node.ntype = filewrite(args_list[0].ntype.clone(), args_list[1].ntype.clone(), args_list[2].ntype.clone(), file_path);
 					}
 					"input" => {
 						let mut ret_val = String::new();
