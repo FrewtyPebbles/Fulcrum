@@ -1,5 +1,7 @@
 use std::{fs::{self, OpenOptions, File}, path::PathBuf};
 
+use indexmap::IndexMap;
+
 use crate::parts::datastructures::{NodeType, StackNode};
 
 pub fn add(mut lhs:Box<NodeType>, mut rhs:Box<NodeType>) -> Box<NodeType> {
@@ -644,4 +646,57 @@ pub fn replace(mut args_list:Box<Vec<Box<StackNode>>>) -> Box<NodeType> {
 		},
 		_ => {String::new()},
 	})));
+}
+
+pub fn push_to_array(mut args_list:Box<Vec<Box<StackNode>>>, mut stack:&mut Box<Vec<Box<IndexMap<String, Box<StackNode>>>>>) {
+	for layer in stack.iter_mut().rev() {
+		if layer.contains_key(args_list[0].args[0].operation.clone().as_str()) {
+			match *layer.get(&*args_list[0].args[0].operation).unwrap().ntype.clone() {
+				NodeType::Str(val) => {
+					match *args_list[1].ntype.clone() {
+						NodeType::Str(val2) => {
+							layer.get_mut(&*args_list[0].args[0].operation).unwrap().ntype = Box::new(NodeType::Str(Box::new(format!("{val}{val2}"))));
+						},
+						NodeType::Int(val2) => {
+							layer.get_mut(&*args_list[0].args[0].operation).unwrap().ntype = Box::new(NodeType::Str(Box::new(format!("{val}{val2}"))));
+						},
+						NodeType::Float(val2) => {
+							layer.get_mut(&*args_list[0].args[0].operation).unwrap().ntype = Box::new(NodeType::Str(Box::new(format!("{val}{val2}"))));
+						},
+						NodeType::Bool(val2) => {
+							layer.get_mut(&*args_list[0].args[0].operation).unwrap().ntype = Box::new(NodeType::Str(Box::new(format!("{val}{val2}"))));
+						},
+						_ => {
+
+						}
+					}
+				}
+				NodeType::Vector => {
+					layer.get_mut(&*args_list[0].args[0].operation).unwrap().args.push(args_list[1].clone());
+				}
+				_ => {
+
+				}
+			}
+		}
+	}
+}
+
+pub fn pop_from_array(mut args_list:Box<Vec<Box<StackNode>>>, mut stack:&mut Box<Vec<Box<IndexMap<String, Box<StackNode>>>>>) {
+	for layer in stack.iter_mut().rev() {
+		if layer.contains_key(args_list[0].args[0].operation.clone().as_str()) {
+			match *layer.get(&*args_list[0].args[0].operation).unwrap().ntype.clone() {
+				NodeType::Str(mut val) => {
+					val.pop();
+					layer.get_mut(&*args_list[0].args[0].operation).unwrap().ntype = Box::new(NodeType::Str(val));
+				}
+				NodeType::Vector => {
+					layer.get_mut(&*args_list[0].args[0].operation).unwrap().args.pop();
+				}
+				_ => {
+
+				}
+			}
+		}
+	}
 }

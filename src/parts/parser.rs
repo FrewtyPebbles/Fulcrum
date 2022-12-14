@@ -2,7 +2,7 @@ use std::{io::{stdin, self}};
 
 use indexmap::IndexMap;
 
-use super::{datastructures::{StackNode, NodeType}, std::standard::{add, sub, mul, div, read, equal, notequal, greater, less, greaterequal, lessequal, filewrite, or, and, in_operator, contains_operator, cat, foreign_function_interface, split, remove_ws, replace}};
+use super::{datastructures::{StackNode, NodeType}, std::standard::{add, sub, mul, div, read, equal, notequal, greater, less, greaterequal, lessequal, filewrite, or, and, in_operator, contains_operator, cat, foreign_function_interface, split, remove_ws, replace, push_to_array, pop_from_array}};
 
 pub fn parse_tree(root:Box<StackNode>, file_path:String){
 	//Variables
@@ -138,18 +138,10 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 						}
 					}
 					"push" => {
-						for layer in stack.iter_mut().rev() {
-							if layer.contains_key(node.args[0].operation.clone().as_str()) {
-								layer.get_mut(&*node.args[0].operation).unwrap().args.push(args_list[1].clone());
-							}
-						}
+						push_to_array(args_list, &mut stack);
 					}
 					"pop" => {
-						for layer in stack.iter_mut().rev() {
-							if layer.contains_key(node.args[0].operation.clone().as_str()) {
-								layer.get_mut(&*node.args[0].operation).unwrap().args.pop();
-							}
-						}
+						pop_from_array(args_list, &mut stack);
 					}
 					"FFI" => {
 						ret_node.ntype = foreign_function_interface(args_list);
