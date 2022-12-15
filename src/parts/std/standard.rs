@@ -256,8 +256,8 @@ pub fn read(mut filepath:Box<NodeType>, origin:String) -> Box<NodeType> {
 	
 	match *filepath {
 		NodeType::Str(val) => {
-			//println!("{}", fs::canonicalize(dir).unwrap().join(*val.clone()).display());
-			Box::new(NodeType::Str(Box::new(fs::read_to_string(fs::canonicalize(dir).unwrap().join(*val)).unwrap())))
+			//println!("{}", dir.join(*val.clone()).display());
+			Box::new(NodeType::Str(Box::new(fs::read_to_string(dir.join(*val)).unwrap())))
 		},
 		_ => {Box::new(NodeType::Bool(Box::new(false)))},
 	}
@@ -283,7 +283,7 @@ pub fn filewrite(mut filepath:Box<NodeType>, mut content:Box<NodeType>, mut writ
 								}
 								_ => {}
 							}
-							match openopt.open(fs::canonicalize(dir).unwrap().join(*filep)) {
+							match openopt.open(dir.join(*filep)) {
 								Ok(val) => {
 									file = val;
 									write!(file, "{}", cont);

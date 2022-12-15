@@ -10,30 +10,43 @@ fun csv_parse(file_path) {
 		row = [];
 		if NE(trim(line), "") {
 			for character in line {
-				if and(E(character, "\"")) {
-					is_str = N(is_str);
-					
+				if and(E(character, "\""), N(is_str)) {
+					is_str = true;
+				}
+				elif and(E(character, "\""), E(last_char, "\"")) {
+					#in quote quote
+					push(str_buff, "\"");
+					last_char = "";
+				}
+				elif and(E(character, "\""), is_str) {
+					is_str = false;
+					push(row, str_buff);
+					str_buff = "";
+					last_char = character;
+				}
+				elif is_str {
+					push(str_buff, character);
+					last_char = character;
+				}
+				elif E(character, ",") {
+					push(row, str_buff);
+				}
+				else {
+					push(str_buff, character);
 				}
 			}
-			if NE(last_char, "\"") {
-				push(row, str_buff);
-				str_buff = "";
-			}
-			push(return_list, row);
 		}
+		push(return_list, row);
 		#end of line
 	}
-
 	return return_list;
 }
 
 parsed_csv = csv_parse("addresses.csv");
 
-print(cat(STRING(parsed_csv), "\n\n"));
-
 for row in parsed_csv {
 	for column in row {
-		print(cat("[", column, "]"));
+		print(cat("//", column, "//"));
 	}
 	print("\n");
 }

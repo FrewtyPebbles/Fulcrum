@@ -3,7 +3,7 @@ use std::env;
 use std::fs;
 
 use parts::tokenizer::tokenize;
-const VERSION:&str = "0.6.4";
+const VERSION:&str = "0.6.5";
 fn main() {
     let args:Vec<String> = env::args().collect();
 	if args.len() == 1 {
