@@ -253,8 +253,10 @@ pub fn div(mut lhs:Box<NodeType>, mut rhs:Box<NodeType>) -> Box<NodeType> {
 pub fn read(mut filepath:Box<NodeType>, origin:String) -> Box<NodeType> {
 	let path = PathBuf::from(origin);
 	let dir = path.parent().unwrap();
+	
 	match *filepath {
 		NodeType::Str(val) => {
+			//println!("{}", fs::canonicalize(dir).unwrap().join(*val.clone()).display());
 			Box::new(NodeType::Str(Box::new(fs::read_to_string(fs::canonicalize(dir).unwrap().join(*val)).unwrap())))
 		},
 		_ => {Box::new(NodeType::Bool(Box::new(false)))},
@@ -648,23 +650,23 @@ pub fn replace(mut args_list:Box<Vec<Box<StackNode>>>) -> Box<NodeType> {
 	})));
 }
 
-pub fn push_to_array(mut args_list:Box<Vec<Box<StackNode>>>, mut stack:&mut Box<Vec<Box<IndexMap<String, Box<StackNode>>>>>) {
+pub fn push_to_array(node:Box<StackNode>, mut args_list:Box<Vec<Box<StackNode>>>, mut stack:&mut Box<Vec<Box<IndexMap<String, Box<StackNode>>>>>) {
 	for layer in stack.iter_mut().rev() {
-		if layer.contains_key(args_list[0].args[0].operation.clone().as_str()) {
-			match *layer.get(&*args_list[0].args[0].operation).unwrap().ntype.clone() {
+		if layer.contains_key(node.args[0].operation.clone().as_str()) {
+			match *layer.get(&*node.args[0].operation).unwrap().ntype.clone() {
 				NodeType::Str(val) => {
 					match *args_list[1].ntype.clone() {
 						NodeType::Str(val2) => {
-							layer.get_mut(&*args_list[0].args[0].operation).unwrap().ntype = Box::new(NodeType::Str(Box::new(format!("{val}{val2}"))));
+							layer.get_mut(&*node.args[0].operation).unwrap().ntype = Box::new(NodeType::Str(Box::new(format!("{val}{val2}"))));
 						},
 						NodeType::Int(val2) => {
-							layer.get_mut(&*args_list[0].args[0].operation).unwrap().ntype = Box::new(NodeType::Str(Box::new(format!("{val}{val2}"))));
+							layer.get_mut(&*node.args[0].operation).unwrap().ntype = Box::new(NodeType::Str(Box::new(format!("{val}{val2}"))));
 						},
 						NodeType::Float(val2) => {
-							layer.get_mut(&*args_list[0].args[0].operation).unwrap().ntype = Box::new(NodeType::Str(Box::new(format!("{val}{val2}"))));
+							layer.get_mut(&*node.args[0].operation).unwrap().ntype = Box::new(NodeType::Str(Box::new(format!("{val}{val2}"))));
 						},
 						NodeType::Bool(val2) => {
-							layer.get_mut(&*args_list[0].args[0].operation).unwrap().ntype = Box::new(NodeType::Str(Box::new(format!("{val}{val2}"))));
+							layer.get_mut(&*node.args[0].operation).unwrap().ntype = Box::new(NodeType::Str(Box::new(format!("{val}{val2}"))));
 						},
 						_ => {
 
@@ -672,7 +674,7 @@ pub fn push_to_array(mut args_list:Box<Vec<Box<StackNode>>>, mut stack:&mut Box<
 					}
 				}
 				NodeType::Vector => {
-					layer.get_mut(&*args_list[0].args[0].operation).unwrap().args.push(args_list[1].clone());
+					layer.get_mut(&*node.args[0].operation).unwrap().args.push(args_list[1].clone());
 				}
 				_ => {
 
@@ -682,16 +684,16 @@ pub fn push_to_array(mut args_list:Box<Vec<Box<StackNode>>>, mut stack:&mut Box<
 	}
 }
 
-pub fn pop_from_array(mut args_list:Box<Vec<Box<StackNode>>>, mut stack:&mut Box<Vec<Box<IndexMap<String, Box<StackNode>>>>>) {
+pub fn pop_from_array(node:Box<StackNode>, mut stack:&mut Box<Vec<Box<IndexMap<String, Box<StackNode>>>>>) {
 	for layer in stack.iter_mut().rev() {
-		if layer.contains_key(args_list[0].args[0].operation.clone().as_str()) {
-			match *layer.get(&*args_list[0].args[0].operation).unwrap().ntype.clone() {
+		if layer.contains_key(node.args[0].operation.clone().as_str()) {
+			match *layer.get(&*node.args[0].operation).unwrap().ntype.clone() {
 				NodeType::Str(mut val) => {
 					val.pop();
-					layer.get_mut(&*args_list[0].args[0].operation).unwrap().ntype = Box::new(NodeType::Str(val));
+					layer.get_mut(&*node.args[0].operation).unwrap().ntype = Box::new(NodeType::Str(val));
 				}
 				NodeType::Vector => {
-					layer.get_mut(&*args_list[0].args[0].operation).unwrap().args.pop();
+					layer.get_mut(&*node.args[0].operation).unwrap().args.pop();
 				}
 				_ => {
 
@@ -746,4 +748,34 @@ pub fn get_range(mut args_list:Box<Vec<Box<StackNode>>>) -> Box<StackNode> {
 		}
 	}
 	Box::new(vector)
+}
+
+pub fn vec_to_str(vect:Box<StackNode>) -> String {
+	let mut return_string = String::new();
+	return_string.push('[');
+	for node in vect.args.iter() {
+		match *node.ntype.clone() {
+			NodeType::Str(val) => {
+				return_string.push('"');
+				return_string += &String::from(format!("{val}"));
+				return_string.push('"');
+			},
+			NodeType::Int(val) => {
+				return_string += &String::from(format!("{val}"));
+			},
+			NodeType::Float(val) => {
+				return_string += &String::from(format!("{val}"));
+			},
+			NodeType::Bool(val) => {
+				return_string += &String::from(format!("{val}"));
+			},
+			NodeType::Vector => {
+				return_string += &vec_to_str(node.clone());
+			},
+			_ => todo!(),
+		}
+		return_string.push(',');
+	}
+	return_string.push(']');
+	return_string
 }

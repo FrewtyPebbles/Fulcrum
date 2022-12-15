@@ -1,8 +1,8 @@
-use std::{io::{stdin, self}};
+use std::{io::{stdin, self}, fmt::format};
 
 use indexmap::IndexMap;
 
-use super::{datastructures::{StackNode, NodeType}, std::standard::{add, sub, mul, div, read, equal, notequal, greater, less, greaterequal, lessequal, filewrite, or, and, in_operator, contains_operator, cat, foreign_function_interface, split, remove_ws, replace, push_to_array, pop_from_array, get_len, get_range}};
+use super::{datastructures::{StackNode, NodeType}, std::standard::{add, sub, mul, div, read, equal, notequal, greater, less, greaterequal, lessequal, filewrite, or, and, in_operator, contains_operator, cat, foreign_function_interface, split, remove_ws, replace, push_to_array, pop_from_array, get_len, get_range, vec_to_str}};
 
 pub fn parse_tree(root:Box<StackNode>, file_path:String){
 	//Variables
@@ -138,10 +138,10 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 						}
 					}
 					"push" => {
-						push_to_array(args_list, &mut stack);
+						push_to_array(node, args_list, &mut stack);
 					}
 					"pop" => {
-						pop_from_array(args_list, &mut stack);
+						pop_from_array(node, &mut stack);
 					}
 					"len" => {
 						ret_node.ntype = get_len(args_list);
@@ -258,10 +258,13 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 					}
 					"STRING" => {
 						match &*args_list[0].ntype.clone() {
-							NodeType::Str(val) => *ret_node.ntype = NodeType::Int(Box::new(val.parse::<i128>().unwrap())),
-							NodeType::Int(val) => *ret_node.ntype = NodeType::Int(Box::new(**val)),
-							NodeType::Float(val) => *ret_node.ntype = NodeType::Int(Box::new(**val as i128)),
-							NodeType::Bool(val) => *ret_node.ntype = NodeType::Int(if **val {Box::new(1)} else {Box::new(0)}),
+							NodeType::Str(val) => *ret_node.ntype = NodeType::Str(Box::new(String::from(format!("{val}")))),
+							NodeType::Int(val) => *ret_node.ntype = NodeType::Str(Box::new(String::from(format!("{val}")))),
+							NodeType::Float(val) => *ret_node.ntype = NodeType::Str(Box::new(String::from(format!("{val}")))),
+							NodeType::Bool(val) => *ret_node.ntype = NodeType::Str(Box::new(String::from(format!("{val}")))),
+							NodeType::Vector => {
+								*ret_node.ntype = NodeType::Str(Box::new(vec_to_str(args_list[0].clone())));
+							}
 							_ => {},
 						}
 					}
@@ -275,10 +278,11 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 						}
 					}
 					_ => {
-						let mut user_func = get_variable(*node.operation, &mut stack);
+						let mut user_func = get_variable(*node.operation.clone(), &mut stack);
 						stack.push(Box::new(IndexMap::new()));
 						for (an, arg) in args_list.iter().enumerate() {
-							let mut name = user_func.args[an].operation.clone();
+							//println!("{}", node.operation.clone());
+							let name = user_func.args[an].operation.clone();
 							user_func.args[an] = arg.clone();
 							user_func.args[an].operation = name;
 							let st_end = stack.len() -1;
@@ -310,7 +314,7 @@ pub fn parse_node(mut user_return: &mut Box<StackNode>, mut executing:&mut Box<b
 			NodeType::Return => {
 				//*user_return.operation = String::from("return");
 				if args_list.len() > 0 {
-					*user_return.ntype = *args_list[0].ntype.clone();
+					*user_return = args_list[0].clone();
 				}
 				else {
 					*user_return.ntype = NodeType::Return;
