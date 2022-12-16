@@ -7,11 +7,9 @@ A fast and straight forward scripting language with a tiny binary and a function
 
  - Higher order functions.
 
- - Lists.
-
  - An extremely minimal and basic syntax.
 
- - An interpreter that is under 4 megabytes in size.
+ - An compact interpreter that can be packaged with your project.
 
 ## Language Rules:
 
