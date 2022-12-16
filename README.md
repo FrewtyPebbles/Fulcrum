@@ -183,6 +183,8 @@ Functions in fulcrum return the result of their operation.
 
  - `rev(list`|`string)` : Reverses a list or string.
 
+ - `CLI(integer)` : Returns command line arguments.
+
  - `import(module_path)` : imports all definitions/functions from the `.ful` file at the path specified into the current scope.
 
 ## Example Program:
