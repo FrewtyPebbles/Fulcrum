@@ -120,7 +120,7 @@ impl Parser {
 	
 	pub fn parse_node(&mut self, mut user_return: &mut Box<StackNode>, mut executing:&mut Box<bool>, node:Box<StackNode>) -> Box<StackNode>{
 		//println!("\n{:?}", node);
-		if !vec![NodeType::Condition, NodeType::Def].contains(&node.ntype) {
+		if !vec![NodeType::Condition, NodeType::Def].contains(&node.ntype) || (*node.ntype == NodeType::Condition && *node.operation == "if") {
 			**executing = true;
 		}
 		let mut args_list:Box<Vec<Box<StackNode>>> = Box::new(vec![]);

@@ -1,4 +1,12 @@
-var = [1,2,["abca\"bc",CLI(1)]];
-#print(var[2][1]);
-#var[2][1] = 30;
-print(rev(var));
+if true {
+	print("test1");
+}
+elif false {
+	print("test2");
+}
+if false {
+	print("test3");
+}
+else {
+	print("test4");
+}
