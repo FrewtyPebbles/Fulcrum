@@ -1,6 +1,3 @@
-use indexmap::IndexMap;
-
-
 #[derive(PartialEq, Debug, Clone)]
 pub enum Token {
 	FuncCall(Box<String>),
@@ -24,7 +21,6 @@ pub enum Token {
 	Return,
 	EndLine,
 	Delimeter,
-	Void,
 	For,
 	In,
 	While,

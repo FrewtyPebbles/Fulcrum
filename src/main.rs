@@ -3,7 +3,7 @@ use std::env;
 use std::fs;
 
 use parts::tokenizer::tokenize;
-const VERSION:&str = "0.7.5";
+const VERSION:&str = "0.8.5";
 fn main() {
     let args:Vec<String> = env::args().collect();
 	if args.len() == 1 {
@@ -12,7 +12,7 @@ fn main() {
 	}
 	else {
 		let contents = fs::read_to_string(args[1].clone())
-			.expect("Should have been able to read the file");
+			.expect("Invalid filepath");
 		tokenize(contents.clone(), args[1].clone(), args);
 	}
 }

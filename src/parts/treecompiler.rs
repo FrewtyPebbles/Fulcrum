@@ -1,13 +1,15 @@
-use crate::parts::{tcdefinitions::definitions::{return_val, scope_start, in_operator, break_keyword}, parser::parse_tree};
+use indexmap::IndexMap;
 
-use super::{datastructures::{Token, StackNode, NodeType}, tcdefinitions::definitions::{func_def, func_call, condition_if, condition_elif, condition_else, statement_end, assign, variable, literal, line_end, scope_end, vector, index, vec_end, end_index, loop_for, loop_while, loop_loop}};
+use crate::parts::{tcdefinitions::definitions::{return_val, scope_start, in_operator, break_keyword}, parser::Parser};
+
+use super::{datastructures::{Token, StackNode}, tcdefinitions::definitions::{func_def, func_call, condition_if, condition_elif, condition_else, statement_end, assign, variable, literal, line_end, scope_end, vector, index, vec_end, end_index, loop_for, loop_while, loop_loop}};
 
 
 
-pub fn compile_tree(tokenlist:Vec<Token>, file_path:String, cli_args:Vec<String>) {
+pub fn compile_tree(tokenlist:Vec<Token>, file_path:String, cli_args:Vec<String>) -> Box<Vec<Box<IndexMap<String, Box<StackNode>>>>> {
 	// tuple 0 = the node and tuple 1 = wether we are in the args or scope of that node
 	let mut stack_buffer:Box<Vec<(Box<StackNode>, Box<bool>)>> = Box::new(vec![(Box::new(StackNode::default()), Box::new(false))]);
-	for (tn, current_token) in tokenlist.iter().enumerate()
+	for current_token in tokenlist.iter()
 	{
 		//println!("token number: {tn}");
 		match current_token {
@@ -72,8 +74,6 @@ pub fn compile_tree(tokenlist:Vec<Token>, file_path:String, cli_args:Vec<String>
 				end_index(&mut stack_buffer);
 			}
 			Token::Delimeter => {},
-			Token::Void => {
-			},
 			Token::For => {
 				loop_for(&mut stack_buffer);
 			}
@@ -92,5 +92,12 @@ pub fn compile_tree(tokenlist:Vec<Token>, file_path:String, cli_args:Vec<String>
 		}
 	}
 	//println!("{:?}", stack_buffer);
-	parse_tree(stack_buffer[0].0.clone(), file_path, cli_args);
+	let mut executor = Parser {
+		file_path,
+		cli_args,
+		stack: Box::new(vec![]),
+	};
+	executor.parse_tree(stack_buffer[0].0.clone());
+	//println!("{:?}", executor.stack);
+	executor.stack
 }

@@ -1,4 +1,4 @@
-# Fulcrum 0.7.5
+# Fulcrum 0.8.5
 A fast and straight forward scripting language with a tiny binary and a functional programming paradigm. 
 
 ## Documentation
@@ -182,6 +182,8 @@ Functions in fulcrum return the result of their operation.
  - `len(string`|`list)` : Returns the len of the first argument.
 
  - `range(num1, num2)` : Returns a list of integers from num1 to num2.
+
+ - `import(module_path)` : imports all definitions/functions from the `.ful` file at the path specified into the current scope.
 
 ## Example Program:
 

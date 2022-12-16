@@ -1,8 +1,10 @@
+use indexmap::IndexMap;
+
 use crate::parts::treecompiler::compile_tree;
 
-use super::datastructures::Token;
+use super::datastructures::{Token, StackNode};
 
-pub fn tokenize (file_content:String, file_path:String, cli_args:Vec<String>) {//create tokens from the file
+pub fn tokenize (file_content:String, file_path:String, cli_args:Vec<String>) -> Box<IndexMap<String, Box<StackNode>>> {//create tokens from the file
 	// TODO: Rework tree compiler to work on a single stack with more consistent rules.
 	//buffers
 	let mut tokenlist:Vec<Token> = vec![];
@@ -12,10 +14,10 @@ pub fn tokenize (file_content:String, file_path:String, cli_args:Vec<String>) {/
 	let mut list_stack:Vec<Token> = vec![];
 	let mut commenting = false;
 
-	let mut raw_lines = file_content.split("\n");
+	let raw_lines = file_content.split("\n");
 	//line loop
 	for (ln, raw_line) in raw_lines.enumerate() {
-		let mut line = raw_line.clone().trim().to_string();
+		let line = raw_line.clone().trim().to_string();
 		//Character loop
 		for (cn, character) in line.chars().enumerate() {
 			if !commenting
@@ -187,5 +189,5 @@ pub fn tokenize (file_content:String, file_path:String, cli_args:Vec<String>) {/
 		commenting = false;
 	}
 	//println!("{:?}", tokenlist);
-	compile_tree(tokenlist, file_path, cli_args);
+	compile_tree(tokenlist, file_path, cli_args)[0].clone()
 }

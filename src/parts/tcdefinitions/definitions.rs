@@ -1,6 +1,6 @@
 use crate::parts::datastructures::{StackNode, NodeType, Token};
 
-pub fn func_call(name:String, mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn func_call(name:String, stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	stack_buffer.push((Box::new(StackNode {
 		operation: Box::new(name),
 		ntype: Box::new(NodeType::Call),
@@ -9,7 +9,7 @@ pub fn func_call(name:String, mut stack_buffer:&mut Vec<(Box<StackNode>, Box<boo
 	}), Box::new(true)));
 }
 
-pub fn func_def(name:String, mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn func_def(name:String, stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	stack_buffer.push((Box::new(StackNode {
 		operation: Box::new(name),
 		ntype: Box::new(NodeType::Def),
@@ -18,7 +18,7 @@ pub fn func_def(name:String, mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool
 	}), Box::new(true)));
 }
 
-pub fn condition_if(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn condition_if(stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	stack_buffer.push((Box::new(StackNode {
 		operation: Box::new(String::from("if")),
 		ntype: Box::new(NodeType::Condition),
@@ -27,7 +27,7 @@ pub fn condition_if(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	}), Box::new(true)));
 }
 
-pub fn condition_elif(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn condition_elif(stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	stack_buffer.push((Box::new(StackNode {
 		operation: Box::new(String::from("elif")),
 		ntype: Box::new(NodeType::Condition),
@@ -36,7 +36,7 @@ pub fn condition_elif(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	}), Box::new(true)));
 }
 
-pub fn condition_else(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn condition_else(stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	stack_buffer.push((Box::new(StackNode {
 		operation: Box::new(String::from("else")),
 		ntype: Box::new(NodeType::Condition),
@@ -45,7 +45,7 @@ pub fn condition_else(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	}), Box::new(true)));
 }
 
-pub fn loop_for(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn loop_for(stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	stack_buffer.push((Box::new(StackNode {
 		operation: Box::new(String::from("for")),
 		ntype: Box::new(NodeType::Loop),
@@ -54,7 +54,7 @@ pub fn loop_for(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	}), Box::new(true)));
 }
 
-pub fn loop_while(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn loop_while(stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	stack_buffer.push((Box::new(StackNode {
 		operation: Box::new(String::from("while")),
 		ntype: Box::new(NodeType::Loop),
@@ -63,7 +63,7 @@ pub fn loop_while(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	}), Box::new(true)));
 }
 
-pub fn loop_loop(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn loop_loop(stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	stack_buffer.push((Box::new(StackNode {
 		operation: Box::new(String::from("loop")),
 		ntype: Box::new(NodeType::Loop),
@@ -72,9 +72,9 @@ pub fn loop_loop(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	}), Box::new(true)));
 }
 
-fn ends(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+fn ends(stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	let last_sb = stack_buffer.len() - 1;
-	let mut last_node = *stack_buffer[last_sb].0.clone();
+	let last_node = *stack_buffer[last_sb].0.clone();
 	stack_buffer.pop();
 	let last_sb = stack_buffer.len() - 1;
 	// let last_inner = stack_buffer[last_sb].0.args.len();
@@ -109,12 +109,12 @@ pub fn vec_end(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	ends(&mut stack_buffer);
 }
 
-pub fn scope_start(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn scope_start(stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	let last_sb = stack_buffer.len() - 1;
 	stack_buffer[last_sb].1 = Box::new(false);
 }
 
-pub fn literal(token:Token, mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn literal(token:Token, stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	let last_sb = stack_buffer.len() - 1;
 	if *stack_buffer[last_sb].1 {
 		match token {
@@ -176,7 +176,7 @@ pub fn literal(token:Token, mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>
 	}
 }
 
-pub fn variable(name:String, mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn variable(name:String, stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	let last_sb = stack_buffer.len() - 1;
 	if *stack_buffer[last_sb].1 {
 		stack_buffer[last_sb].0.args.push(Box::new(StackNode {
@@ -196,7 +196,7 @@ pub fn variable(name:String, mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool
 	}
 }
 
-pub fn assign(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn assign(stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	
 	let last_sb = stack_buffer.len() - 1;
 	let last_in_last_children = stack_buffer[last_sb].0.scope.last().unwrap().clone();
@@ -209,7 +209,7 @@ pub fn assign(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	}), Box::new(true)));
 }
 
-pub fn in_operator(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
+pub fn in_operator(stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	let last_sb = stack_buffer.len() - 1;
 	if *stack_buffer[last_sb].0.ntype == NodeType::Loop && *stack_buffer[last_sb].0.operation == "for" {
 		// stack_buffer.push((Box::new(StackNode {
@@ -231,7 +231,7 @@ pub fn in_operator(mut stack_buffer:&mut Vec<(Box<StackNode>, Box<bool>)>) {
 	}
 }
 
-pub fn return_val(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
+pub fn return_val(stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
 	stack_buffer.push((Box::new(StackNode {
 		operation: Box::new(String::new()),
 		ntype: Box::new(NodeType::Return),
@@ -240,7 +240,7 @@ pub fn return_val(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
 	}), Box::new(true)));
 }
 
-pub fn vector(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
+pub fn vector(stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
 	stack_buffer.push((Box::new(StackNode {
 		operation: Box::new(String::new()),
 		ntype: Box::new(NodeType::Vector),//(Box::new(vec![])),
@@ -249,7 +249,7 @@ pub fn vector(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
 	}), Box::new(true)));
 }
 
-pub fn index(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
+pub fn index(stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
 	stack_buffer.push((Box::new(StackNode {
 		operation: Box::new(String::new()),
 		ntype: Box::new(NodeType::Index),
@@ -258,7 +258,7 @@ pub fn index(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
 	}), Box::new(true)));
 }
 
-pub fn end_index(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
+pub fn end_index(stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
 	let last_sb = stack_buffer.len() - 1;
 	let mut last_node = *stack_buffer[last_sb].0.clone();
 	stack_buffer.pop();
@@ -277,7 +277,7 @@ pub fn end_index(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
 	}
 }
 
-pub fn break_keyword(mut stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
+pub fn break_keyword(stack_buffer:&mut Box<Vec<(Box<StackNode>, Box<bool>)>>) {
 	let sb_len = stack_buffer.len()-1;
 	stack_buffer[sb_len].0.scope.push(Box::new(StackNode {
 		operation: Box::new(String::new()),
