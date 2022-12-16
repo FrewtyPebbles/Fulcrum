@@ -183,6 +183,8 @@ Functions in fulcrum return the result of their operation.
 
  - `range(num1, num2)` : Returns a list of integers from num1 to num2.
 
+ - `rev(list`|`string)` : Reverses a list or string.
+
  - `import(module_path)` : imports all definitions/functions from the `.ful` file at the path specified into the current scope.
 
 ## Example Program:
