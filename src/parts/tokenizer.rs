@@ -2,7 +2,7 @@ use crate::parts::treecompiler::compile_tree;
 
 use super::datastructures::Token;
 
-pub fn tokenize (file_content:String, file_path:String) {//create tokens from the file
+pub fn tokenize (file_content:String, file_path:String, cli_args:Vec<String>) {//create tokens from the file
 	// TODO: Rework tree compiler to work on a single stack with more consistent rules.
 	//buffers
 	let mut tokenlist:Vec<Token> = vec![];
@@ -187,5 +187,5 @@ pub fn tokenize (file_content:String, file_path:String) {//create tokens from th
 		commenting = false;
 	}
 	//println!("{:?}", tokenlist);
-	compile_tree(tokenlist, file_path);
+	compile_tree(tokenlist, file_path, cli_args);
 }
