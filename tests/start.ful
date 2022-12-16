@@ -1,20 +1,4 @@
-fun testfunc(){
-	print("abc\n");
-}
-
-import("modules/module.ful");
-
-parsed_csv = csv_parse(CLI(1));
-
-testfunc();
-for row in parsed_csv {
-	for column in row {
-		print(cat("[", column, "]"));
-	}
-	print("\n");
-}
-
-var = [1,2,["abca\"bc",23]];
+var = [1,2,["abca\"bc",CLI(1)]];
 #print(var[2][1]);
-var[2][1] = 30;
-print(rev("abca\"bc"));
+#var[2][1] = 30;
+print(rev(var));

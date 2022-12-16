@@ -434,7 +434,7 @@ impl Parser {
 				},
 				NodeType::Vector => {
 					*ret_node.ntype = NodeType::Vector;
-					ret_node.args = node.args;
+					ret_node.args = args_list;
 				},
 				NodeType::Index => {
 					//println!("{:?}", stack);

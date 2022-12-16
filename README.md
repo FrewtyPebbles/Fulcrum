@@ -1,4 +1,4 @@
-# Fulcrum 0.8.5
+# Fulcrum 0.8.6
 A fast and straight forward scripting language with a tiny binary and a functional programming paradigm. 
 
 ## Documentation
