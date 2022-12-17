@@ -264,7 +264,14 @@ impl Parser {
 							let mut ret_val = String::new();
 							io::Write:: flush(&mut io::stdout()).expect("flush failed!");
 							stdin().read_line(&mut ret_val).unwrap();
-							*ret_node.ntype = NodeType::Str(Box::new(String::from(String::from(ret_val.strip_suffix("\n").unwrap()).strip_suffix("\r").unwrap())))
+							fn remove_suffix<'a>(s: &'a str, p: &str) -> &'a str {
+								if s.ends_with(p) {
+									&s[..s.len() - p.len()]
+								} else {
+									s
+								}
+							}
+							*ret_node.ntype = NodeType::Str(Box::new(String::from(String::from(remove_suffix( &remove_suffix(&ret_val, "\n"), "\r")))))
 						}
 						"INT" => {
 							match &*args_list[0].ntype {
