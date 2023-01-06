@@ -1,4 +1,4 @@
-# Fulcrum 0.8.8
+# Fulcrum 0.8.9
 A fast and straight forward scripting language with a tiny binary and a functional programming paradigm. 
 
 ## Documentation
@@ -47,7 +47,7 @@ A fast and straight forward scripting language with a tiny binary and a function
 
  - `=` : Used to declare or assign to existing variables.
 
- - `"` : Wraps a string literal.
+ - `'` : Wraps a string literal.
 
  - `in` : Operator that checks if the left side is in the right side when not used inside a for loop.
 
@@ -66,7 +66,7 @@ A fast and straight forward scripting language with a tiny binary and a function
 
 ```
 loop {
-	print("Loop!\n");
+	print('Loop!\n');
 }
 ```
 
@@ -77,8 +77,8 @@ Loops will loop until the path of execution hits a `break` or a `return`.
 ```
 // String Example
 
-for i in "abc" {
-	print(add(i, "\n"));
+for i in 'abc' {
+	print(add(i, '\n'));
 }
 
 // output:
@@ -89,7 +89,7 @@ for i in "abc" {
 // Integer Example
 
 for i in 3 {
-	print(add(i, "\n"));
+	print(add(i, '\n'));
 }
 
 // output:
@@ -99,8 +99,8 @@ for i in 3 {
 
 // List Example
 
-for i in ["1", 2.0, 3] {
-	print(add(i, "\n"));
+for i in ['1', 2.0, 3] {
+	print(add(i, '\n'));
 }
 
 // output:
@@ -112,7 +112,7 @@ for i in ["1", 2.0, 3] {
 
 variable = [0, 1, 2];
 for i in variable {
-	print(add(i, "\n"));
+	print(add(i, '\n'));
 }
 
 // output:
@@ -131,7 +131,7 @@ Functions in fulcrum return the result of their operation.
 
  - `read(filepath)` : Returns the contents of the file provided.
 
- - `write(filepath, new_content, writemode)` : Writes the `new_content` to the file provided based on the writemode which can be `"a"` for append or `"t"` for truncate.
+ - `write(filepath, new_content, writemode)` : Writes the `new_content` to the file provided based on the writemode which can be `'a'` for append or `'t'` for truncate.
 
  - `add(val1, val2)` : Adds 2 values. also concatenates strings.
 
@@ -196,65 +196,65 @@ fun tictactoe() {
 	# Board will act as a global that will hold the state of the tic tac toe board.
 	board = [
 		# 1   2   3
-		[" "," "," "], #a
-		[" "," "," "], #b
-		[" "," "," "]  #c
+		[' ',' ',' '], #a
+		[' ',' ',' '], #b
+		[' ',' ',' ']  #c
 	];
 
 	fun check_winner() {
 		#horizontal
-		if E(board[0], ["O", "O", "O"]) {
-			return "O";
+		if E(board[0], ['O', 'O', 'O']) {
+			return 'O';
 		}
-		elif E(board[0], ["X", "X", "X"]) {
-			return "X";
+		elif E(board[0], ['X', 'X', 'X']) {
+			return 'X';
 		}
-		elif E(board[1], ["O", "O", "O"]) {
-			return "O";
+		elif E(board[1], ['O', 'O', 'O']) {
+			return 'O';
 		}
-		elif E(board[1], ["X", "X", "X"]) {
-			return "X";
+		elif E(board[1], ['X', 'X', 'X']) {
+			return 'X';
 		}
-		elif E(board[2], ["O", "O", "O"]) {
-			return "O";
+		elif E(board[2], ['O', 'O', 'O']) {
+			return 'O';
 		}
-		elif E(board[2], ["X", "X", "X"]) {
-			return "X";
+		elif E(board[2], ['X', 'X', 'X']) {
+			return 'X';
 		}
 		#vertical
-		elif and(and(E(board[0][0], "O"), E(board[1][0], "O")), E(board[2][0], "O")) {
-			return "O";
+		elif and(and(E(board[0][0], 'O'), E(board[1][0], 'O')), E(board[2][0], 'O')) {
+			return 'O';
 		}
-		elif and(and(E(board[0][0], "X"), E(board[1][0], "X")), E(board[2][0], "X")) {
-			return "X";
+		elif and(and(E(board[0][0], 'X'), E(board[1][0], 'X')), E(board[2][0], 'X')) {
+			return 'X';
 		}
-		elif and(and(E(board[0][1], "O"), E(board[1][1], "O")), E(board[2][1], "O")) {
-			return "O";
+		elif and(and(E(board[0][1], 'O'), E(board[1][1], 'O')), E(board[2][1], 'O')) {
+			return 'O';
 		}
-		elif and(and(E(board[0][1], "X"), E(board[1][1], "X")), E(board[2][1], "X")) {
-			return "X";
+		elif and(and(E(board[0][1], 'X'), E(board[1][1], 'X')), E(board[2][1], 'X')) {
+			return 'X';
 		}
-		elif and(and(E(board[0][2], "O"), E(board[1][2], "O")), E(board[2][2], "O")) {
-			return "O";
+		elif and(and(E(board[0][2], 'O'), E(board[1][2], 'O')), E(board[2][2], 'O')) {
+			return 'O';
 		}
-		elif and(and(E(board[0][2], "X"), E(board[1][2], "X")), E(board[2][2], "X")) {
-			return "X";
+		elif and(and(E(board[0][2], 'X'), E(board[1][2], 'X')), E(board[2][2], 'X')) {
+			return 'X';
 		}
 		#diagonal
-		elif and(and(E(board[0][0], "O"), E(board[1][1], "O")), E(board[2][2], "O")) {
-			return "O";
+		elif and(and(E(board[0][0], 'O'), E(board[1][1], 'O')), E(board[2][2], 'O')) {
+			return 'O';
 		}
-		elif and(and(E(board[0][0], "X"), E(board[1][1], "X")), E(board[2][2], "X")) {
-			return "X";
+		elif and(and(E(board[0][0], 'X'), E(board[1][1], 'X')), E(board[2][2], 'X')) {
+			return 'X';
 		}
-		elif and(and(E(board[2][0], "O"), E(board[1][1], "O")), E(board[0][2], "O")) {
-			return "O";
+		elif and(and(E(board[2][0], 'O'), E(board[1][1], 'O')), E(board[0][2], 'O')) {
+			return 'O';
 		}
-		elif and(and(E(board[2][0], "X"), E(board[1][1], "X")), E(board[0][2], "X")) {
-			return "X";
+		elif and(and(E(board[2][0], 'X'), E(board[1][1], 'X')), E(board[0][2], 'X')) {
+			return 'X';
 		}
 
-		return "";
+		return '';
 	}
 
 	fun update_board(current_player) {
@@ -263,12 +263,12 @@ fun tictactoe() {
 		fun print_board() {
 			# this function renders the current board.
 			# board is inherited from top most function and acts as a global.
-			print(add(add(add(add(board[0][0], "|"),board[0][1]),"|"),board[0][2]));
-			print("\n-----\n");
-			print(add(add(add(add(board[1][0], "|"),board[1][1]),"|"),board[1][2]));
-			print("\n-----\n");
-			print(add(add(add(add(board[2][0], "|"),board[2][1]),"|"),board[2][2]));
-			print("\n");
+			print(add(add(add(add(board[0][0], '|'),board[0][1]),'|'),board[0][2]));
+			print('\n-----\n');
+			print(add(add(add(add(board[1][0], '|'),board[1][1]),'|'),board[1][2]));
+			print('\n-----\n');
+			print(add(add(add(add(board[2][0], '|'),board[2][1]),'|'),board[2][2]));
+			print('\n');
 		}
 
 		# render the board at the start of the turn
@@ -277,33 +277,33 @@ fun tictactoe() {
 		# check for a winner
 		is_winner = check_winner();
 		if is_winner {
-			write("tictactoe_wins.txt", add(is_winner, ", "), "a");
-			print(add(add("The winner is: ", is_winner), "\n"));
-			print("Previous wins:\n");
-			print(read("tictactoe_wins.txt"));
+			write('tictactoe_wins.txt', add(is_winner, ', '), 'a');
+			print(add(add('The winner is: ', is_winner), '\n'));
+			print('Previous wins:\n');
+			print(read('tictactoe_wins.txt'));
 			return is_winner;
 		}
 
 		# Get horizontal input.
-		print("horizontal:");
+		print('horizontal:');
 		x = sub(INT(input()),1);
 		
 		# Get vertical input.
-		print("vertical:");
+		print('vertical:');
 		y = sub(INT(input()), 1);
 		
 		# Set the current player at that position.
 		board[x][y] = current_player;
 		
 		# Check who the current player is to recursively call update board as the other player.
-		if E(current_player, "X") {
-			return update_board("O");
+		if E(current_player, 'X') {
+			return update_board('O');
 		}
 		else {
-			return update_board("X");
+			return update_board('X');
 		}
 	}
-	return update_board("X");
+	return update_board('X');
 }
 
 # Run the game

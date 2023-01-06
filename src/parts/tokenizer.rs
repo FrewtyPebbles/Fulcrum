@@ -23,7 +23,7 @@ pub fn tokenize (file_content:String, file_path:String, cli_args:Vec<String>) ->
 			if !commenting
 			{
 				if is_string {
-					if character == '"' && last_character != '\\' {
+					if character == '\'' && last_character != '\\' {
 						is_string = false;
 						tokenlist.push(Token::StringLit(Box::new(charbuff.clone())));
 						charbuff = String::new()
@@ -176,7 +176,7 @@ pub fn tokenize (file_content:String, file_path:String, cli_args:Vec<String>) ->
 							}
 						}
 					}
-					'"' => {
+					'\'' => {
 						is_string = !is_string;
 					}
 					_ => {
