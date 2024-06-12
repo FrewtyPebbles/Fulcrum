@@ -1,5 +1,8 @@
 # Fulcrum 0.8.9
-A fast and straight forward scripting language with a tiny binary and a functional programming paradigm. 
+A straight forward scripting language with a tiny binary and a functional programming paradigm.
+
+***Note:***
+> This was the first complete working programming language I made.  I learned alot from the trials and tribulations involved in its development.
 
 ## Documentation
 
